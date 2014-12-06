@@ -29,7 +29,7 @@
 
 #include "dal.hpp"
 #include "access.hpp" // g_matrix_ddl_separators
-#include <strstream.h>
+#include <strstream>
 
 namespace Data_Access_Library {
 

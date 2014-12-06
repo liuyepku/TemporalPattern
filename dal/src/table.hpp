@@ -7,6 +7,8 @@
 #define TABLE_HEADER
 
 #include "dal.hpp"
+#include "matvec.hpp"
+#include "instances.cpp"
 
 namespace Data_Access_Library {
 

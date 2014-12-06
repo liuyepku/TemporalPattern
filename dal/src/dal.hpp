@@ -32,6 +32,7 @@
 #include "ustream.hpp"
 #include "matvec.hpp"
 #include "stlstream.hpp"
+#include "table.hpp"
 #include <deque>
 #include <list>
 
