@@ -1,0 +1,8 @@
+
+# test of sort with symbolic labels
+# Frank Hoeppner, 2002 July 18
+
+echo "sorting"
+rm x.tab
+../../src/sort "data:f<test.tab>x.tab data/key2:w</value>/value data/key:w</label>/label numeric<labels.tab" 
+diff --ignore-all-space --ignore-blank-lines x.tab result.tab

@@ -1,0 +1,37 @@
+
+\section{\pstc\ -- Set/Tuple Conversion}
+
+The \pstc\ program converts data sets to tuples and vice versa.  This
+conversion is useful, for instance, to convert equally sampled time series
+(represented as sets of input/output pairs $\{(x_i,y_i)|i=1..m\}\subset\RR^2$)
+into a more compact tuple format $(y_1,..,y_m)\in\RR^m$. If your data objects
+are tuples, you will get sets of pairs, for instance:
+
+\[ (1,7,4,2,9) \quad\to\quad \{ (0,1), (0.25,7), (0.5,4), (0.75,2), (1,9) \} \]
+
+The x-coordinates within $[0,1]$ are written to \ftime, the y-coordinates to
+\fvalue\ in the \cdata\ collection. 
+
+Applying \pstc\ to sets of 2D-data objects yields tuples:
+
+\[ \{ (0.2,4), (0.3,1), (0.6,7) \} \quad\to\quad  (4,1,7) \]
+
+\begin{center}\begin{tabular}{cllp{6cm}}\hline
+\vio &\cdata&\fvalue&the data\\
+\hline\end{tabular}\end{center}
+
+An example for tuple-to-set conversion is \cmd{stc data=htest.tab
+  data/value=/c} and set-to-tuple via \cmd{stc data=htest.tab} If you have
+high dimensional data you can use \pstc\ and \pgnuplot\ to display your data
+in parallel coordinates. First, transform the triples into three
+\ftime/\fvalue\ pairs: \cmd{stc data=htest.tab data/value=htest.tab/c
+  model:f=x.tab} And then let gnuplot connect these points with lines by (call
+\pgnuplot\ first) \cmd{plot "x-model.tab" using 2:1 w l} The {\tt :f} modifier
+suppresses hierarchical information in the output file, the end of a
+collection is only by a newline. This allows gnuplot to detect when a line
+ends.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

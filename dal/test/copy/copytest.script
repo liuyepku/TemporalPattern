@@ -1,0 +1,25 @@
+
+# copy hierarchical data
+# Frank Hoeppner, 2002 Aug 8
+
+echo "testing copy and hierarchy"
+
+rm x.ddl
+../../src/copy "data<data.ddl>x.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl level0.ddl
+
+rm x.ddl
+../../src/copy "data()<data.ddl>x.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl level1.ddl
+
+rm x.ddl
+../../src/copy "data(*)<data.ddl>x.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl level1.ddl
+
+rm x.ddl
+../../src/copy "data(*,*)<data.ddl>x.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl level2.ddl
+
+rm x.ddl
+../../src/copy "data(*,*,*)<data.ddl>x.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl level3.ddl

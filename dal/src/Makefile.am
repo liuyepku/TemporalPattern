@@ -1,0 +1,60 @@
+
+###########################
+### dal/src/Makefile.am ###
+###########################
+
+CXXFLAGS = $(DEBUG_FLAGS)
+INCLUDES = $(UTILITY_INCLUDE) $(LOGTRACE_INCLUDE)
+
+##############
+### libdal ###
+##############
+
+# dal library headers and math headers
+include_HEADERS = dal.hpp algorithm.hpp \
+matvec.hpp primitives.hpp matvecop.hpp matinvert.hpp matinvert.cpp mread.hpp
+
+lib_LTLIBRARIES = libdal.la
+libdal_la_SOURCES = $(LIBFILES)
+LIBDAL = libdal.la
+
+# dal library sources
+LIBFILES = \
+  domain.cpp \
+  context.cpp \
+  table.hpp table.cpp \
+  instances.cpp \
+  access.hpp access.cpp \
+  globdef.cpp \
+  algorithm.cpp iterate.cpp filter.cpp distance.cpp numeric.cpp
+
+# template sources and headers
+EXTRA_DIST = \
+  datatype.cpp io.cpp datarep.cpp globdef.hpp \
+  \
+  logtrace.h \
+  \
+  mread.cpp mcompare.cpp Box.cpp Box.hpp Statistics.cpp Statistics.hpp
+
+
+################
+### PROGRAMS ###
+################
+
+LDADD = $(LIBDAL) $(LOGTRACE_LIBRARY) $(UTILITY_LIBRARY) -lm
+bin_PROGRAMS = cmat copy sort nnc sample stat group
+#test part hist copy tf stc
+
+sort_SOURCES = sort.cpp
+#test_SOURCES = test.cpp
+nnc_SOURCES = nnc.cpp
+group_SOURCES = group.cpp
+#part_SOURCES = part.cpp
+#hist_SOURCES = hist.cpp
+copy_SOURCES = copy.cpp
+#tf_SOURCES = tf.cpp
+sample_SOURCES = sample.cpp
+cmat_SOURCES = cmat.cpp
+stat_SOURCES = stat.cpp
+#stc_SOURCES = stc.cpp
+

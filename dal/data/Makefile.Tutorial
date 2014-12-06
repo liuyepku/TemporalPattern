@@ -1,0 +1,25 @@
+
+# Makefile (c) Frank Hoeppner, 2001
+# This file is part of the DAL package.
+
+# demo from "getting started" section in manual
+
+all: result.ddl
+
+# iris statistics
+iris-stat.ddl : iris.ddl
+	stat data=iris.ddl summ=iris-stat.ddl
+# subsampling of iris.ddl
+iris-sub.ddl : iris.ddl iris-stat.ddl
+	echo "<ddl><args><takeoverprob 0.2></args></ddl>" | sample data=iris.ddl data/class:w summ=iris-stat.ddl
+	mv iris-data.ddl iris-sub.ddl
+# simple nearest-neighbour classifier
+iris-sub-data.ddl : iris-sub.ddl
+	nnc data=iris.ddl clsfd=iris-sub.ddl/data
+	mv iris-data.ddl iris-sub-data.ddl
+# result (confusion matrix)
+result.ddl : iris.ddl iris-sub-data.ddl
+	freq data=iris.ddl data/cluster=iris-sub-data.ddl/data/class
+
+clean:
+	rm iris-stat.ddl iris-sub.ddl iris-sub-data.ddl

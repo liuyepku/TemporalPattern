@@ -1,0 +1,110 @@
+
+
+template <class T>
+class GridTable
+  : public T
+  {
+  public:
+    explicit GridTable(tuple_type&,tuple_type&,tuple_type*,int,const string,Domain *d=NULL);
+
+    virtual void rewind();
+    virtual void push();
+    virtual bool pop();
+    virtual bool done();
+    virtual void submit();
+  
+  private:
+    tuple_type *mp_min,*mp_max,*mp_gridp;
+
+    int dim,samp_per_dim,samp_total,index;
+    tuple_type::value_type offset;
+  };
+
+template <class T>
+GridTable<T>::GridTable
+  (
+  tuple_type *p_minimum,
+  tuple_type *p_maximum,
+  int_type *p_samples,
+  tuple_type *p_gridpoint,
+  int mode,
+  const string& name,
+  Domain *d=NULL
+  )
+  : T(mode,name,d)
+  , mp_min(p_minimum)
+  , mp_max(p_maximum)
+  , mp_gridp(p_gridpoint)
+  {
+  INVARIANT((mp_min->val().rows()>0) && (p_samples->val()>0),"");
+  /** Anzahl der Daten n pro Dimension (insgesamt also n^dim)
+      festlegen, wobei n^dim < m_samples gelten soll */
+  dim = mp_min->val().rows();
+  int samp_per_dim = (int) (exp(log(p_samples->val())/dim)+0.5);
+  int samp_total = (int) (pow(samp_per_dim,dim)+0.5); 
+  if (samp_total > p_samples->dim()) 
+    { --samp_per_dim; samp_total=static_cast<int>(pow(samp_per_dim,dim)); }
+
+  /** Offset in den Achsen berechnen */
+  offset.alloc(dim); 
+  for (int i=0;i<dim;++i) 
+    {
+    offset[i]=(m_maximum()[i]-m_minimum()[i])/(samp_per_dim-1.0);
+    m_maximum.var()[i] += offset[i]/2.0;
+    }
+
+  index = 0;
+  }
+
+template <class T>
+void
+GridTable<T>::rewind()
+  { 
+  index=0; 
+  T::rewind(); 
+  }
+
+template <class T>
+bool
+GridTable<T>::pop()
+  {
+  return T::pop();
+  }
+
+
+    /** Grid erzeugen */
+    mp_data_iter->inc_level();
+    m_value.var().adjust(dim);
+    matrix_set(m_value.var(),m_minimum());
+    bool again; 
+    int d=1;
+    for (int i=0;i<samp_total;++i)
+    { 
+      // "Einruecken" fuer jede Iteration in 1. Dimension
+      if (d>0) mp_data_iter->inc_level(); 
+
+      mp_data_iter->push();
+
+      d=0;
+      do
+      {
+        m_value.var()[d] += offset[d];
+        again = (m_value()[d] > m_maximum()[d]);
+        if (again)
+	  { m_value.var()[d]=m_minimum()[d]; ++d; again=true; }
+      }
+      while ((again) && (d<dim));
+
+      // "Einruecken" nach jeder Iteration in 1. Dimension
+      if (d>0) mp_data_iter->dec_level();
+    }
+    mp_data_iter->dec_level();
+
+    } // if 
+
+
+
+
+
+
+

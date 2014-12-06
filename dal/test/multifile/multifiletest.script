@@ -1,0 +1,14 @@
+
+# Frank Hoeppner, 2002 Oct 24
+
+echo "multi file reading"
+
+# test no 1
+../../src/stat "data<source1.ddl data/time<source2.ddl/data/time" > y.ddl
+diff --ignore-all-space --ignore-blank-lines result.ddl y.ddl
+
+../../src/stat "data<source1.ddl data/time</t" > y.ddl
+diff --ignore-all-space --ignore-blank-lines result.ddl y.ddl
+
+../../src/stat "data<source1.ddl data/time</data/t" > y.ddl
+diff --ignore-all-space --ignore-blank-lines result.ddl y.ddl

@@ -1,0 +1,161 @@
+
+\documentclass[a4paper]{book}
+\usepackage[latin1]{inputenc}
+\usepackage{german}
+\usepackage{times}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{alltt}
+\usepackage{doxygen}
+
+\makeindex
+\setcounter{tocdepth}{1}
+\setlength{\footrulewidth}{0.4pt}
+\begin{document}
+
+\rfoot[\today]{DAL Referenz}
+\lfoot[DAL Referenz]{\today}
+\cfoot{}
+
+%%% title
+\thispagestyle{empty}
+\title{DAL -- Referenzhandbuch\\[-3mm]
+\rule{12cm}{1mm}\\[1cm]}
+\author{Frank H\"oppner}
+\maketitle
+
+%%% body
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+
+\chapter{Einführung}
+
+When writing your own programs, you should stick to the following
+command order in your main function:
+
+\begin{enumerate}
+
+\item Instantiate tables and attached fields.
+
+\item Initialize context default values. This has to be done before
+the command line is evaluated, otherwise the user settings will be
+overwritten.
+
+\item Read command line. Since input/output files are specified on the
+command line, it has to be evaluated before the tables are
+initialized.
+
+\item Create the algorithm.
+
+\item Initialize the tables (e.g.\ \verb+data.init();+). 
+
+\item Modify algorithm to respect iterations (must be called after
+command line iteration).
+
+\item Run algorithm.
+
+\item Close tables.
+
+\end{enumerate}
+
+
+
+\chapter{Algorithms}
+
+%DAA = Data Access Algorithms
+
+beide parallel abarbeiten, d.h. 1. von data und 1. von model, dann 2. von data
+und 2. von model, etc.
+ 
+\begin{verbatim}
+forall(\&data,
+  forall(\&model,x()))
+
+verschaltelt abarbeiten:
+
+forall(\&data,
+ embed(
+  forall(\&model,x())))
+
+nacheinander abarbeiten
+
+forall(\&data,
+ seq(
+  forall(\&model,x())))
+\end{verbatim}
+
+Eigentlich sollte jeder Algorithmus zwei Nachfolge-Algorithmen haben:
+einer, der parallel ausgefuehrt wird und einer der sequentiell
+ausgefuehrt wird!!! (so wie es jetzt bei allen Iteration und Elapsed
+schon ist). Bei einigen Alg. aber nicht so sinnig, etwa
+Distanzberechnung: wird 1x gemacht, Ergebnis steht nach step() zur
+Verfuegung, seq. und par. Nachfolger sehr aehnlich.
+
+
+The algorithms in this package do not use buffered tables. This means that all
+tables are read from the ASCII multiple times if necessary. However, you can
+change that by using {\tt BMasterTable table(...);} instead of {\tt MasterTable
+table(...);} and add an {\tt table.submit();} before {\tt table.done(); }
+
+SHARED fields shall not be used in buffered tables.
+
+warum nicht entkopplung von sequentialisierung und algorithmen? (Warum
+hat jeder alg einen successor, man koennte die alg doch auch von
+aussen verknuepfen, etwa durch seq(a,b) statt bei instantiierung von
+a bereits b als successor anzugeben?) Der Vorteil waere, dass bei
+mehrfacher verwendung desselben algorithmus dieser mehrfach als
+Referenz uebergeben werden koennte (weil ja der Nachfolger
+unterschiedlich sein kann ist das jetzt nicht moeglich).
+
+ist mit vorsicht zu geniessen: ein algorithmus \verb+forall(&model)+ mag
+mehrfach auftauchen, aber es darf nicht dieselbe Referenz genommen
+werden, weil jede Instanz eigene lokale Variablen hat! Um hier
+Fehlerquellen zu vermeiden, muss jeder Alg neu instantiiert werden (es
+werden ja nur die lokalen Variablen neu angelegt).
+
+
+grundsaetzlich sollten algorithmen keine lokalen variablen haben
+(sondern \verb+abstract_data_types+ dafuer benutzen). Warum? zum beispiel
+mean-berechnung: im FCM werden viele means berechnet, iteration ueber
+prototypen. wuerde MeanCalc lokale Variablen benutzen, wuerden die
+beim wechsel der prototypen durcheinanderkommen (\verb+xembed_loop+)...
+man sollte wenigstens pro algorithmus dazuschreiben, ob er lokale Vars
+hat, weil das die einsatzmoeglichkeiten beeinflusst
+
+
+\section{Handling Program Arguments}
+
+To ensure a consistent argument handling, the main program shall not
+fetch arguments explicitly. (Note that in some cases, summary
+collections may be conceptually equivalent to argument collections.)
+Then, the program uses default argument values only, as well as
+overridden values such as {\tt args/count=7}. 
+
+Formally, {\tt args<console} does not cause an iteration over the
+argument table, therefore no arguments will be read from the command
+line but still the default values are used! Only if {\tt
+args(*)<console} is used, an automatic algorithm iteration is invoked
+and argument records are read from the console. (Consider
+identification of {\tt args<console} and {\tt args(*)<console}.)
+
+\chapter{Übersicht}
+\input{namespaces}
+\input{hierarchy}
+\input{annotated}
+%\input{files}
+\chapter{Klassen-Dokumentation}
+\input{class_data_access_library__iobase}
+\input{class_data_access_library__writer}
+\input{struct_data_access_library__marker_type}
+%\chapter{DAL Reference Datei-Dokumentation}
+%\input{access_cpp}
+%\include{access_hpp}
+\printindex
+
+\end{document}

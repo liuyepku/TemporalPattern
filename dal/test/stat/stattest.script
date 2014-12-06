@@ -1,0 +1,13 @@
+#!
+
+echo "testing stat"
+
+# testing stat
+
+../../src/stat "data<test.csv numeric@3 summ>x.tab"
+diff x.tab result.tab
+
+# ... and feature selection
+
+../../src/stat "data<test.csv data/value</value@(1,2) numeric@3 summ>x2.tab"
+diff x2.tab result2.tab

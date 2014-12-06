@@ -1,0 +1,769 @@
+
+\documentclass[a4paper]{book}
+\usepackage{times}
+\usepackage{citesort}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{alltt}
+\usepackage{doxygen}
+\usepackage{comment}
+\pagestyle{plain}
+\makeindex
+\setcounter{tocdepth}{1}
+\setlength{\footrulewidth}{0.4pt}
+\bibliographystyle{abbrv}
+
+\lfoot[\today]{DAL Tutorial}
+\rfoot[DAL Tutorial]{\today}
+\cfoot{}
+
+
+%% UTILITY
+
+\newcommand{\cmd}[1]{%
+{\vspace{-2mm}\tt\begin{center}\begin{tabular}{||l||}%
+\hline%
+#1\\%
+\hline%
+\end{tabular}\end{center}}\vspace{-2mm}}
+\newcommand{\vin}{$\rightarrow$}
+\newcommand{\vout}{$\leftarrow$}
+\newcommand{\vio}{$\leftrightarrow$}
+
+\newcommand{\printprogram}[1]{{\tt #1}\index{#1}}
+\newcommand{\printfield}[2]{{\tt <#1 #2>}\index{#1 field}\index{field!#1}}
+
+%% DDL files
+
+\newcommand{\iris}{{\tt iris.ddl}\index{iris.ddl}}
+\newcommand{\noargs}{{\tt noargs.ddl}\index{noargs.ddl}}
+\newcommand{\myargs}{{\tt myargs.ddl}}
+
+%% PROGRAMS
+
+\newcommand{\psed}{\printprogram{sed}}
+\newcommand{\pawk}{\printprogram{awk}}
+\newcommand{\pgnuplot}{\printprogram{gnuplot}}
+\newcommand{\pstat}{\printprogram{stat}}
+\newcommand{\pgroup}{\printprogram{group}}
+\newcommand{\psample}{\printprogram{sample}}
+\newcommand{\pfreq}{\printprogram{freq}}
+\newcommand{\pnnc}{\printprogram{nnc}}
+\newcommand{\pcopy}{\printprogram{copy}}
+\newcommand{\pstc}{\printprogram{stc}}
+\newcommand{\pfcm}{\printprogram{fcm}}
+
+%% ARGS
+
+\newcommand{\fkey}{\printfield{key}{INT}}
+\newcommand{\fref}{\printfield{ref}{INT}}
+\newcommand{\cargs}{{\tt <args>}\index{args collection}\index{collection!args}}
+\newcommand{\fsamplemode}{\printfield{samplemode}{LABEL}}
+\newcommand{\ftakeoverprob}{\printfield{takeoverprob}{REAL}}
+\newcommand{\lrandombox}{\printfield{samplemode}{randombox}}
+\newcommand{\lsubsampleprob}{\printfield{samplemode}{subsampprob}}
+\newcommand{\lsubsample}{\printfield{samplemode}{subsample}}
+\newcommand{\ffuzzifier}{\printfield{fuzzifier}{REAL}}
+\newcommand{\fepsilon}{\printfield{epsilon}{REAL}}
+\newcommand{\fmaxiter}{\printfield{maxiter}{INT}}
+
+%% DATA
+
+\newcommand{\cdata}{{\tt <data>}\index{data collection}\index{collection!data}}
+\newcommand{\fvalue}{\printfield{value}{TUPLE}}
+\newcommand{\ftime}{\printfield{time}{REAL}}
+\newcommand{\fclass}{\printfield{class}{SYMBOL}}
+\newcommand{\fcluster}{\printfield{cluster}{SYMBOL}}
+\newcommand{\fweight}{\printfield{weight}{REAL}}
+\newcommand{\fdistance}{\printfield{distance}{TUPLE}}
+\newcommand{\fmembership}{\printfield{memb}{TUPLE}}
+
+%% PROT
+
+\newcommand{\cprot}{{\tt <prot>}\index{prot collection}\index{collection!prot}}
+%\newcommand{\fvalue}{\printfield{value}{TUPLE}}
+\newcommand{\fcenter}{\printfield{center}{TUPLE}}
+\newcommand{\flabel}{\printfield{label}{LABEL}}
+
+%% SUMMary
+
+\newcommand{\csumm}{{\tt <summ>}\index{summ collection}\index{collection!summ}}
+\newcommand{\fsamples}{{\tt <samples INT>}\index{samples field}\index{field!samples}}
+\newcommand{\fminimum}{{\tt <minimum TUPLE>}\index{minimum field}\index{field!minimum}}
+\newcommand{\fmaximum}{{\tt <maximum TUPLE>}\index{maximum field}\index{field!maximum}}
+\newcommand{\fmean}{{\tt <mean TUPLE>}\index{mean field}\index{field!mean}}
+\newcommand{\fvariance}{{\tt <variance TUPLE>}\index{variance field}\index{field!variance}}
+\newcommand{\fperiod}{{\tt <period TUPLE>}\index{period field}\index{field!period}}
+
+%% LOOP
+
+\newcommand{\cloop}{{\tt <loop>}\index{loop collection}\index{collection!loop}}
+\newcommand{\fchange}{{\tt <change REAL>}\index{samples field}\index{field!samples}}
+\newcommand{\floopctr}{{\tt <loopctr INT>}\index{minimum field}\index{field!minimum}}
+
+
+\begin{document}
+
+%%% title
+\thispagestyle{empty}
+\title{DAL Tutorial\\[-3mm]
+\rule{12cm}{1mm}\\[1cm]}
+\author{Frank H\"oppner}
+\maketitle
+
+%%% body
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+
+\chapter{Introduction}
+
+\begin{flushright}\sl 
+Let the world experiment:\\
+build toolkits rather than complete systems.%\\[3mm]
+%{\sc Pat Hayes}\\[3mm]
+\end{flushright}
+
+This package contains a C++ data access library (DAL) that simplifies
+access to numerical and symbolical data, and some accompanying
+programs. The library supports three types of (ASCII) data files,
+XML-style\footnote{not yet 100\% XML compatible} files, ASCII tables,
+and comma-separated values.  It provides simple access to records
+whose fields are distributed over multiple files and has been designed
+to ease the implementation and use of data analysis methods. This
+document contains some examples that will demonstrate the usage of the
+DAL and the accompanying programs.
+
+Why ASCII files instead of an SQL database?
+\begin{itemize}
+  
+\item Availability: Many public dataset are available in the ASCII
+table format (see for example the UCI repositories
+\cite{Blake:UCIMLREP:1998,Bay:UCIKDDREP:1999}). Most of the freely
+available ML and KDD tools use one of these or a very similar data
+format.
+
+\item Portability: It is easier to transfer an ASCII file to another
+platform than porting an SQL database (except you convert it into an
+ASCII file...).
+
+\item Extendibility: Some data fields such as vectors or matrices of
+varying sizes have not direct equivalent in a conventional
+databases. Besides that, especially in the XML-style files new fields
+can be generated arbitrarily, without the need for creating new
+columns in a data table explicitly. (Note that ASCII files are not
+that bad if the columns are sparsely filled.)
+  
+\item Readability: You can make changes and you can inspect the data by means
+  of a simple text editor. 
+  
+\item Simplicity: It turns out, that for data analysis methods it is
+sufficient to run sequentially through the data, no direct access
+to specific records is necessary. Thus, the sophisticated methods that
+make SQL databases efficient will not be used anyway.
+
+\end{itemize}
+
+Instead of an integrated data analysis environment, this package provides a
+couple of tiny programs that can be chained easily on the command line. Why
+not an integrated solution?
+\begin{itemize}
+
+\item Simplicity: It is much easier (for me and for everybody who
+wants to extend the functionality of the package) to write a small
+program than to extend a large, existing application. The idea is to
+follow the UNIX paradigm of writing a number of small and simple tools
+rather than writing a single complex program. 
+
+\item Flexibility: Scripts and Makefiles can be used to combine the
+programs, and thus serve as a kind of meta-language. If you want to
+model this in an integrated approach, you probably end up with
+something similar, so why not use your shell and make?
+
+\item Automation: With integrated environments automation is often a
+problem.  Things work fine as long as you do rapid prototyping with
+limited data, but executing the same bunch of programs 100 times under
+slightly different conditions is a problem (or a lot of manual work)
+with many integrated tools (unless you have a powerful script language
+implemented).
+\end{itemize}
+
+However, the algorithms accompanying the DAL library are written in a
+style such that they can be combined easily on the code level (such
+that the development of an integrated tool is at least possible). The
+idea is to test an approach using Makefiles and tiny programs,
+and once you are satisfied with the concept you can make an integrated
+program such that intermediate outputs are no longer necessary and
+thus you gain some speed-up.
+
+The aim of this document is to motivate other people to use the DAL
+for their own work, and in turn to make them contributing their own
+algorithms. The library makes data access very easy and flexible, such
+that you can concentrate on the important things from the beginning.
+
+\paragraph{Other packages and information.} 
+The DAL library is the base package, providing the library and some
+programs, which are also described in this document. Other algorithms
+will come in separate packages which require the DAL library to be
+installed. All packages (including DAL) require the {\tt utility}
+library. The {\tt logtrace} package for debugging is highly recommended if
+you want to write your own programs, but it is not a prerequisite.
+Documents that explain the internals of the data access (in german
+language) as well as the implementation of algorithms using the DAL
+are in preparation.
+
+\begin{comment}
+\paragraph{Wishlist.}
+Some things have not changed, for example, we still do not have a graphical
+user interface. I think it is more important to have the functionality than a
+GUI, but I also know that many people prefer clicking through windows. If
+someone wants to spend some time on this, here is what I would like to see: A
+graphical interface, which shows the flow of data from input files through
+programs to output files and again into the next program etc. Changing and
+extending the data flow should be done graphically. The visualizer should read
+out and write back -- makefiles! And it would also be nice to have an
+interactive data visualization, preferably in Java, mainly compatible to
+gsv/xsv tools in the FC package.
+\end{comment}
+
+\paragraph{Installation.}
+
+Make sure that the {\tt utility} library is installed. Then, to
+unpack, configure, and compile the package, just type the following
+commands \cmd{gunzip dal-X.X.X.tar.gz\\ tar -xvf dal-X.X.X.tar\\ cd
+dal-X.X.X \\ ./configure \\ make} A couple of test scripts will be
+executed by \cmd{make check} If you have not installed the {\tt
+utility} package as root ({\tt make install}), the above script will
+not work. There is a {\tt runinstall} script on the website from which
+you have obtained this package, that will install {\tt utility} and
+{\tt dal} (and {\tt logtrace}, if available) into a local file such
+that no root rights are required.
+
+\paragraph{Copyright and Acknowledgements.}
+This software is published under LGPL, see {\tt License} file. Thanks
+to the University of Applied Sciences in Emden, Germany, for the
+permission to publish this package under LGPL.
+
+\chapter{Getting Started} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{intro:sec}
+
+\paragraph{Terminology.}
+Before we start, let us quickly agree on our terminology. A real-world
+object is described by several attributes or features, which are
+numerical or symbolic in nature, e.g.\ the eye-color of humans or the
+height of your desk.  Attributes can also be multivariate, for example
+spatial coordinates (x, y, and z position). We call such an attribute
+(or vector of attributes) a {\sl field}. The real-world object is
+usually described by several fields. All fields that belong to the
+same object are gathered together in a {\sl collection} or {\sl
+record}.  Objects can be organized sequentially (which is the case
+with most databases) or hierarchically (a geometric object may consist
+of several other geometric objects). By {\sl dataset} or {\sl table}
+we refer to a set of records, describing many objects. A dataset is
+stored in an ASCII file of various formats (see section
+\ref{fileformat:sec}). We notate a vector of values 3 and 5 by {\tt (3
+5)} or alternatively specify its size explicitly as in {\tt [2](3
+5)}. Matrices are written row by row, that is, $\left( {2 \atop 5} {7
+\atop 9}\right)$ is written as {\tt ((2 7)(5 9))} or {\tt [2x2]((2
+7)(5 9))}. The optional size spezification allows for faster reading
+operations.
+
+\section{Controlling Data Flow}
+
+Consider the well-known Iris data set, which can be found in the subdirectory
+\verb+data+ in the file \iris\ in an XML-style format. For each of 150
+flowers (real-world objects), a vector of attribute values is given (sepal
+length, sepal width, petal length, and petal width), and the type of the flower
+(Versicolor, Virginica, Setosa). For each of the three types there are 50
+examples. Here is an excerpt of the file:
+
+\begin{verbatim}
+[...]
+<data> <value (5.1 3.5 1.4 0.2)> <label Setosa> </data>
+<data> <value (4.9 3.0 1.4 0.2)> <label Setosa> </data>
+<data> <value (4.7 3.2 1.3 0.2)> <label Setosa> </data>
+<data> <value (4.6 3.1 1.5 0.2)> <label Setosa> </data>
+[...]
+\end{verbatim}
+
+The numerical values are stored in a {\tt <value ...>} field, the type
+of the flower is stored in a {\tt <label ...>} field. The {\tt <data>
+... </data>} tags indicate that the {\tt <value ...>} and {\tt
+<label ...>} fields belong to the same object. Now we can use the
+\pstat\ program to perform some elementary statistics. The program
+yields the result in a summary collection.  For example, the
+command \cmd{stat "data<iris.ddl"} yields
+\begin{verbatim}
+<summ><key 0><minimum (4.3 2 1 0.1)> ... <weightsum 150></summ>
+\end{verbatim}
+The \pstat\ program needs a {\tt <data>} table which is provided by
+{\tt iris.ddl}. Note that there is a strong similarity to the usage of
+pipes, however, the applicability of pipes is limited if multiple
+tables are used. The command \cmd{stat "data<iris.ddl summ>x.ddl"}
+writes the {\tt <summ>} table into the file {\tt x.ddl} rather than on
+the screen. Be sure that you put the arguments in quotation marks,
+otherwise your shell will break the argument into multiple pieces.
+Figure \ref{iocmd:fig} summarizes the command line syntax regarding
+data flow.
+
+If the file \iris\ is not found in the current directory, the program
+examines a user-defined data directory before it exits with an
+error. The data directory is specified by means of the environment
+variable {\tt DAL\_DATAPATH}. When using the {\tt tcsh} shell you can the set
+the variable via
+\cmd{setenv DAL\_DATAPATH /yourhomepath/yourdatadirectory}
+
+\begin{figure}[htb]
+\begin{center}\begin{tabular}{|c|p{8cm}|}
+\hline
+{\tt data<x.ddl} & Read the {\tt <data>} collection from file {\tt
+x.ddl}.
+\\
+{\tt data>y.ddl} & Write resulting {\tt <data>} collection to file
+{\tt y.ddl}.
+\\
+{\tt data<iris.ddl/flower} & Specify name-tags for XML-style
+files. Here, instead of reading {\tt <data>} records, the
+program would look for {\tt <flower>} records. Also possible for
+output. Useful when re-using the output of one file as the input of
+another.
+\\
+{\tt data<x.ddl>y.ddl} & Specify both, input and output files.
+\\
+{\tt console} & Reserved word, can be used as a file name, refers to
+input from or output to console.
+\\
+{\tt null} & Reserved word, can be used as a file name to denote that
+there is no input or that no output is desired.
+\\ 
+\hline
+\end{tabular}
+\caption{\label{iocmd:fig}Controlling data flow.}
+\end{center}\end{figure}
+
+
+\section{Hierarchical Data}
+
+The output of \pstat\ contained a \fkey\ field, which is used to
+enumerate and identify all records in a database. This unique key can
+be used to refer to a record. In a hierarchical dataset, there is also
+a \fref\ field. A record with a \fref\ field belongs to the record
+with the same value in the \fkey\ field. Let us use the \pgroup\
+program to group the IRIS records by their class labels, that is, the
+50 examples for Iris Setosa are gathered into one data collection, and
+also the examples for Iris Versicolor and Virginica. The command
+\cmd{group "data<iris.ddl>irish.ddl data/value:c args/mode=group"}
+creates a hierarchically organized dataset in the file {\tt
+irish.ddl}:
+\begin{verbatim}
+<data><key 0></data>
+<data><key 1><ref 0><value (5.1 3.5 1.4 0.2)><label Setosa></data>
+<data><key 2><ref 0><value (4.9 3.0 1.4 0.2)><label Setosa></data>
+<data><key 3><ref 0><value (4.7 3.2 1.3 0.2)><label Setosa></data>
+                       [... another 47 samples of Iris Setosa ...]
+<data><key 51></data>
+             [... 50 samples of Iris Versicolor with <ref 51> ...]
+<data><key 102></data>
+             [... 50 samples of Iris Virginica with <ref 102> ...]
+\end{verbatim}
+
+Many programs support the hierarchical organisation of data. If we
+apply the \pstat\ command to the {\tt irish.ddl} file \cmd{stat
+"data<irish.ddl"} we will get the same result as before. However, if
+we call \cmd{stat "data(*,*)<iris.ddl"} we get statistics for
+each of the classes Setosa, Versicolor, and Virginica.
+\begin{verbatim}
+<summ><key 0></summ>
+<summ><ref 0><key 1><minimum (4.3 2.3 1 0.1)> ... <weightsum 50></summ>
+<summ><key 2></summ>
+<summ><ref 2><key 3><minimum (4.9 2 3 1)> ... <weightsum 50></summ>
+<summ><key 4></summ>
+<summ><ref 4><key 5><minimum (4.9 2.2 4.5 1.4)> ... <weightsum 50></summ>
+\end{verbatim}
+
+One can imagine the hierarchical data set {\tt irish.ddl} as a tree,
+where the root node contains three sons (those records that have no
+reference field) and each of the sons contains 50 samples of the Iris
+flower. The elements of the tree can be referenced by a
+multidimensional vector: the root node corresponds to the empty
+null-vector \verb+()+. The sons of the root node are identified by a
+1-dimensional vector, where \verb+(1)+ refers to the first son,
+\verb+(2)+ to the second son, etc., and \verb+(*)+ to all sons of root
+(wild card character {\tt *}). Sons of a son are referenced by a pair
+of keys, such as \verb+(2,3)+, which is the third son of the second
+son of root. The specification of {\tt (*,*)} can be understood as a
+constraint that requires records in the second hierarchy
+level. In our case, we have three subsets in {\tt irish.ddl} that
+match this description, namely the subset of Setosa, Versicolor, and
+Virginica flowers.
+
+Consequently, \cmd{stat data<irish.ddl} is equivalent to \cmd{stat
+data(*)<irish.ddl} since \pstat\ reads all {\tt <data>} records anyway
+(but the commands would make a difference if that would not be the
+case). The command \cmd{stat data(*,*,*)<irish.ddl} produces no
+output, because there are no records in hierarchy depth 3 in {\tt
+irish.ddl}. 
+
+Using this kind of key-templates, sets of records can be selected and
+the respective program is executed once for each of these
+sets. Whenever we reach a record that does not match the template
+while scanning sequentially through the database, the currently
+considered set is closed. A new set is opened when a record matches
+the template again. For each of these sets an empty output record is
+created and the output of the respective program is associated with
+this empty record. Thus, the output for each set is collected in a
+separate set in hierarchy level 2 (cf.\ results of {\tt stat
+"data(*,*)<iris.ddl"}). Figure \ref{hcmd:fig} summarizes the command syntax for
+hierarchical data.
+
+\begin{figure}[htb]
+\begin{center}\begin{tabular}{|c|p{11cm}|}
+\hline
+{\tt data(1)} & One subset, containing the first record only. \\
+{\tt data(1,*)} & One subset, containing all sons of the first
+record.\\
+{\tt data(*,1)} & As many subsets as sons $A$ of root, each contains
+the first son of $A$. \\
+{\tt data(*,*)} & As many subsets as sons $A$ of root, each contains all
+sons of $A$.\\
+{\tt data(*,*,*)} & As many subsets as sons $B$ of sons $A$ of root, each
+contains all sons of $B$.\\
+\hline
+\end{tabular}
+\caption{\label{hcmd:fig}Selecting subsets of a hierarchical {\tt
+<data>} collection.}
+\end{center}\end{figure}
+
+% using "norm" to normalize different data sets as a whole or set-wise.
+
+% "statistic" with symbolic data using freq
+
+\section{Supported File Formats}\label{fileformat:sec}
+
+\subsection{The {\tt .tab} Format}
+
+A {\tt .tab} file (table file) starts with a header line, containing
+the names for each row in the table. Fields are separated by white
+spaces. Multivariate fields must be encoded as univariate fields:
+vector attributes must be neighboured and get the same label (like the
+{\tt coord} field in the example below). The header (and also optional
+comment lines) start with \#.  Table files cannot store fields of
+varying dimension since their size is fixed by the header line.
+
+\begin{verbatim}
+# item coord coord
+yellowblock 2 4
+greenblock 6 4
+redcylinder 3 3
+\end{verbatim}
+
+\subsection{The {\tt .csv} Format}
+
+A {\tt .csv} file (comma separated values) starts also with a header line, but
+without leading \#. Fields are separated by commata. Multivariate fields are
+allowed. 
+
+\begin{verbatim}
+item,coord 
+yellowblock,[2](2 4)
+greenblock,[2](6 4)
+redcylinder,[2](3 3)
+\end{verbatim}
+
+\subsection{The {\tt .ddl} Format}
+
+A {\tt .ddl} file (data description language) has nothing like a
+header line, each field is named whenever it occurs in the file (in an
+XML-style). This file format is useful if the fields in a records are
+sparsely filled. The records are enclosed by {\tt <name> ... </name>}
+tags where {\tt name} is the name of the table. Thus, it is possible
+to store multiple tables in a single {\tt .ddl} file.
+
+\begin{verbatim}
+<data> <item yellowblock> <coord [2](2 4)> </data>
+<data> <item greenblock> <coord [2](6 4)> </data>
+<data> <item redcylinder> <coord [2](3 3)> </data>
+\end{verbatim}
+
+Although the example looks like XML, it is not really. One important
+difference to XML is the way hierarchical data is encoded: In XML you
+would write
+\begin{verbatim}
+<data> <item A> 
+   <data> <item A.1> </data>
+   <data> <item A.2> </data>
+</data>
+<data> <item B> </data>
+\end{verbatim}
+whereas in the DAL package we use the key/ref mechanism to denote
+hierarchical dependencies:
+\begin{verbatim}
+<data> <key 0>         <item A>   </data>
+<data> <key 1> <ref 0> <item A.1> </data>
+<data> <key 2> <ref 0> <item A.2> </data>
+<data> <key 3>         <item B>   </data>
+\end{verbatim}
+One reason for not using the standard XML notation is that we want to
+read records sequentially. In XML we could place the {\tt <item A>}
+also at the end of the first record, such that we would have to read
+the successors of {\tt A} before we read {\tt A} itself.
+\begin{verbatim}
+<data>
+   <data> <item A.1> </data>
+   <data> <item A.2> </data>
+   <item A> 
+</data>
+<data> <item B> </data>
+\end{verbatim}
+(However, it should not be a major problem to write a wrapper program
+that switches between the different hierarchy representations.)
+
+\section{Program Arguments}
+
+Almost every program needs some arguments. Whether an algorithm
+accomplishes its task or not often depends on the used parameter
+values. With many algorithms finding the ``right parameter setting''
+is a non-trivial task itself.  To test parameter sensitivity or the
+stability of the results you may also want to run a program with
+different parameters several times. We take this into account by
+considering arguments just like any other input data to the algorithm.
+
+Arguments are gathered in an {\tt <args>} collection.  Consider the
+\psample\ program that selects a subset of a table of a given
+size. The number of records to be extracted is specified by the {\tt
+<count INT>} field in the {\tt <args>} collection.  You can specify
+the argument on the command line as follows: \cmd{sample
+"data<iris.ddl data/value:c args/count=10"}
+
+Now, suppose you want to sample several times from {\tt iris.ddl},
+then you could either type the command again and again or create a
+file {\tt args.ddl} such as
+\begin{verbatim}
+<args> <count 10> </args>
+<args> <count 7> </args>
+<args> <count 13> </args>
+\end{verbatim}
+Since we do not make a difference between data and arguments, you can apply
+the techniques for iterated program execution that were discussed in the
+previous section to your arguments, too. You will get a table of three
+samplings by calling \cmd{sample "data<iris.ddl data/value:c
+  args(*)<args.ddl"} In general, the accompanying programs do not read {\tt
+  <args>} records by default, that is {\tt args<args.ddl} will not cause the
+\psample\ program to be executed several times. However, using the {\tt (*)}
+template in {\tt args(*)<args.ddl} causes a repetition for each record that
+matches the template -- and {\tt (*)} matches all records.
+
+In fact, by the above mentioned {\tt args/count=10} command we set the default
+value\index{default value} of the {\tt <count>} field to 10. If you would add
+a line {\tt <args> </args>} to {\tt args.ddl} (with no {\tt <count>} field)
+this default value will apply.
+
+
+\section{Fields from multiple files}
+
+Fields of the same collection may be distributed over multiple files. As an
+example, consider a clustering algorithm which groups similar data objects
+into similar clusters. The next algorithm may need the original feature
+vectors as well as the cluster to which an object belongs. It would be
+inefficient to copy the orginal features in the second file together with the
+clustering result. Is there a better way? Having specified the source for a
+collection, we can additionally specify data paths for single attributes as in
+{\tt data<x.ddl data/value=y.ddl/data/myvalue}. Now, instead of reading the
+{\tt <value>} field from {\tt x.ddl}, it will be read from the {\tt <myvalue>}
+field in the {\tt <data>} collection of file {\tt y.ddl}.
+
+beispiel sample data<iris.ddl args/count=10 
+produziert nur key felder...! 
+1. Variante mit :c (vorher schon mal verwendet)
+oder mit umleitung copy "data<t.ddl data/key<origkey" ?????????
+
+
+sample "data<iris.ddl>i.ddl args/count=10"     mglw data/value:c
+copy "data<i.ddl data/value<iris.ddl/data/value"   
+
+selbes ergebnis...
+
+
+
+As a concrete example, consider a classification task. A file with classified
+data is given in \iris, we create a subset of it by means of \cmd{echo
+  "<ddl><args><takeoverprob 0.2></args></ddl>" $|\backslash$ \\ sample
+  data=iris.ddl} We create an unclassified data file using the \pcopy\ 
+program, which copies only \fvalue\ fields by default, thus skipping the class
+labels: \cmd{copy data=iris.ddl\\ mv iris-data.ddl unclassified.ddl} By means
+of \cmd{nnc model=classified.ddl/data data=unclassified.ddl/data\\ mv
+  unclassified-data.ddl classlabel.ddl} the nearest neighbour algorithm
+predicts class labels for the unclassified data collections and writes them
+into {\tt classlabel.ddl}. Now, we are interested in the classification or
+error rate, which me might determine by means of \pfreq, which compares
+symbolic attributes \fclass\ and \fcluster\ in a \cdata\ collection. Here we
+want to compare the known classification (\fclass\ field in \cdata\ collection
+of \iris) with the predicted class (\fclass\ field in \cdata\ collection of
+{\tt classlabel.ddl}): \cmd{freq data=iris.ddl
+  data/cluster=classlabel.ddl/data/class}
+
+\section{Field Modifiers and Feature Selection}
+
+Field modifiers and feature selection mechanisms are summarized in
+figure \ref{modcmd:fig}.
+
+\begin{figure}[htb]
+\begin{center}\begin{tabular}{|c|p{8cm}|}
+\hline
+{\tt data:f} & Flat output of {\tt <data>} collection, no {\tt <key>}
+or {\tt <ref>} fields. Applicable to collections only.
+\\
+{\tt data/value:c} & Copy field {\tt <value>} of {\tt <data>}
+collection. Then, this field is contained in the output even if the
+program itself did not use this field. Applicable to fields only.
+\\
+{\tt data/value:q} & Suppress output of field {\tt <value>} of {\tt <data>}
+collection. Applicable to fields only.
+\\
+{\tt data/value:w} & Force output of field {\tt <value>} of {\tt <data>}
+collection. In contrast to the {\tt :c} modifier, the specified field
+is known to the used program but by default not contained in the
+output. Applicable to fields only.
+\\
+{\tt data/value@(1,3)} & Select only attribute \#1 and \#3 from the vector
+  (feature selection capability)\index{feature selection} (Indizes beginnen
+  bei 0.) Note that the numbers must be separated by `,' and not by a blank!\\
+\hline
+\end{tabular}
+\caption{\label{modcmd:fig}Field and table modifiers.}
+\end{center}\end{figure}
+
+\section{Domains}
+
+Most of the fields are associated with a domain, such as {\tt boolean}
+for boolean fields or {\tt numeric} for real-valued fields. The domain
+of boolean fields recognizes keywords like {\tt no} and {\tt yes} as
+the respective boolean values. If a field is symbolic in nature, the
+symbolic labels are stored in the domain and are then mapped to
+integer numbers for internal use.  However, it may happen that the
+ordering of the integer number does not correspond to the
+(lexicographical) ordering of the labels. To achieve this, you can
+specify a table containing labels and integer numbers and force the
+programs to read out this table at the beginning. Depending on the
+ordering you have used in the table, the numerical order of the
+integer numbers may then correspond to the lexicographical (or any
+other) order of the labels. Havin initialized a domain by reading such
+a table, it is {\sl fixed}, that is, you will get an error message if
+other labels occur that were not found in the table at the beginning.
+
+In principle, it is also possible to introduce symbolic labels for
+domains such as {\tt numeric}, however, you should carefully check
+that both representations are not intermangled, that is, choose
+numerical representatives for the symbolic labels that definitely do
+not occur elsewhere in your numerical data. A possible application is
+to map {\tt NaN} to a very high value or to a negative number if your
+application uses only positive numbers. Then you can identify {\tt
+NaN}-values, which would not be read by the program otherwise.
+
+Associated with every domain is a precision for the output of numerical
+values. By reducing this precision to a comparatively low value (e.g. 3) the
+output is less sensitive to the floating point precision of the respective
+computer (we use this in some test scripts to compare the results with some
+pre-calculated results), for instance, try the command \cmd{stat
+  "data<iris.ddl numeric@3"}
+
+\begin{figure}[htb]
+\begin{center}\begin{tabular}{|c|p{8cm}|}
+\hline
+{\tt labels<labels.tab} & Fix the values of the domain of symbolic labels
+using the records in {\tt labels.tab}. The table must contain two fields, {\tt
+  <label STRING>} contains the symbolic label and {\tt <value INT>} contains
+the integer representative.
+\\
+{\tt numeric@3} & Limits the output precision of fields in the {\tt numeric}
+domain to 3.
+\\
+\hline
+\end{tabular}
+\caption{\label{domcmd:fig}Domain commands.}
+\end{center}\end{figure}
+
+\begin{figure}[htb]
+\begin{center}\begin{tabular}{|c|p{8cm}|}
+\hline
+{\tt boolean} & Boolean values 1=true=yes, 0=false=no\\
+{\tt numeric} & Numerical values\\
+{\tt labels} & Symbolical values\\
+{\tt count} & Integer counts\\
+{\tt timestamp} & Time stamps\\
+\hline
+\end{tabular}
+\caption{\label{freqdom:fig}Frequently used domains.}
+\end{center}\end{figure}
+
+\begin{comment}
+
+\section{Exercises}
+
+These exercises are meant to train you in getting familar with the programs,
+however, solving the exercises also requires the usage of other standard UNIX
+tools like \psed\ or \pawk.
+
+\begin{enumerate}
+  
+\item Select randomly 15 records from the IRIS dataset, such that every flower
+  is equally likely in the subsampled set.
+  
+  {\sl Thus, we need 5 records Versicolor, 5 records .... We build a
+    hierarchical dataset using group and then sample within each group.
+
+ \iris\   sample "data[,]<irish.ddl data/value:c" 
+ }
+
+\item Write a script to subsample the \iris\ dataset 200 times and evaluate
+  how many samples are necessary to get a prediction rate of at least 90\% for
+  the complete \ciris\ dataset, if you use the subsampling as input for the
+  nearest neighbor classifier.
+
+sample
+nnc
+freq
+sed 'rate' | ... 
+hist
+
+\end{enumerate}
+
+\verbatiminput{../data/Makefile.Tutorial}
+
+\end{comment}
+
+\chapter{Programs}
+
+There are some very simple programs accompanying the DAL library, other
+packages will become available on the same website from which you have
+obtained DAL.
+
+The program descriptions contain a list of records and fields that are used by
+it. Together with the fields, you will find information about the domain the
+field belongs to (if any) and whether it is an input or output field (or
+both).
+
+\newpage\input{sample_cpp}
+\newpage\input{stat_cpp}
+\newpage\input{sort_cpp}
+\newpage\input{nnc_cpp}
+\newpage\input{copy_cpp}
+\newpage\input{group_cpp}
+
+%%%
+%%% Index
+%%%
+
+\newpage
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+\bibliography{abr,abc,def,ghi,jkl,mno,pqr,stu,vwxyz}
+
+\end{document}
+

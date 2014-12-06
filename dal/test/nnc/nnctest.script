@@ -1,0 +1,5 @@
+
+rm -f x.dll
+../../src/nnc "classified<train.csv unclassified<data.ddl>x.ddl"
+diff x.ddl result.ddl
+

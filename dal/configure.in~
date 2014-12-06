@@ -1,0 +1,26 @@
+
+dnl ********************************************************************
+dnl *** configure.in, package DAL, <frank.hoeppner@ieee.org>
+
+AC_INIT
+AM_CONFIG_HEADER(config.h)
+dnl package release number
+AM_INIT_AUTOMAKE(dal,0.2.0)
+
+AC_PROG_RANLIB
+AC_LANG_CPLUSPLUS
+AC_PROG_CXX
+AC_PROG_CXXCPP
+
+FH_HAVE_STL
+FH_DEBUG
+FH_REQ_UTIL
+FH_LT_DEBUG
+AM_PROG_LIBTOOL
+
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AC_OUTPUT(Makefile src/Makefile doc/Makefile data/Makefile test/Makefile
+test/files/Makefile test/group/Makefile test/sample/Makefile)

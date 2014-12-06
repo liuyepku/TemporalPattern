@@ -1,0 +1,20 @@
+
+# test script for group
+# Frank Hoeppner, 2002 July 5
+
+echo "testing group algorithm"
+
+# group by label
+rm -f g.csv
+../../src/group "data<data.csv>g.csv data/value:c data/label</model args/mode=group"
+diff --ignore-all-space --ignore-blank-lines g.csv grouped.csv
+
+# separate labels (useful for generating sets for cross-validation)
+rm -f s.csv
+../../src/group "data<data.csv>s.csv data/value:c data/label</model args/mode=separate"
+diff --ignore-all-space --ignore-blank-lines s.csv separated.csv
+
+# testing stat with grouped data
+rm -f s.ddl
+../../src/stat "data(*,*)<g.csv numeric@2 summ>s.ddl"
+diff --ignore-all-space --ignore-blank-lines s.ddl groupedstat.ddl

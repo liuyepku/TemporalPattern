@@ -1,0 +1,4 @@
+reconf
+rm $HOME/my/local
+ln -s $HOME/my/local_debug $HOME/my/local
+configure --enable-utility=$HOME/my/local --enable-logtrace --prefix=$HOME/my/local

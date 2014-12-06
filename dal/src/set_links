@@ -1,0 +1,20 @@
+#!/usr/bin/tcsh -x
+
+# MATH
+
+setenv math_files "matvec.hpp matvecop.hpp primitives.hpp matinvert.hpp matinvert.cpp mread.cpp mread.hpp mcompare.cpp Box.cpp Box.hpp Statistics.hpp Statistics.cpp"
+
+foreach f ($math_files)
+rm $f
+ln -s $PROJECTPATH/math/src/$f $f
+end
+
+# LOGTRACE
+
+setenv lt_files "logtrace.h"
+
+foreach f ($lt_files)
+rm $f
+ln -s $PROJECTPATH/logtrace/src/$f $f
+end
+

@@ -1,0 +1,12 @@
+2002-08-08  frank hoeppner  <frank.hoeppner@ieee.org>
+
+	* complete rewrite of DAA kernel (algorithms)
+
+2001-11-13  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* complete rewrite of DAL kernel (data access)
+
+2001-02-01  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* first version
+

@@ -1,0 +1,32 @@
+
+\section{\psample\ -- Drawing random samples}
+
+\begin{description}
+\item[\function] The \psample\ program draws random samples, currently only
+  uniformly distributed samples from a hyperbox.
+\item[\reading] It reads the number of samples \fsamples\ to be generated, and
+  the size of the hyperbox specified by \fminimum\ and \fmaximum.  
+  \begin{description}
+  \item[\cargs\ collection:] \fsamples, \ftakeoverprob
+  \item[\csumm\ collection:] \fminimum, \fmaximum
+  \end{description}
+\item[\writing] It returns data collections with \fvalue\ fields (the
+  samples). They are embedded into another data collection to indicate which
+  samples belong to each other. This is relevant if the algorithm is run
+  several times (see example).
+  \begin{description}
+  \item[\cdata\ collection:] \fvalue
+  \end{description}
+\item[\example] In this example, we use the \noargs\ file for the \cargs\ 
+  collection, where \fsamples\ is set to 3. You can draw 3 samples from the
+  hyperbox enclosing the iris data by means of \cmd{stat data=iris.ddl
+    summ=s.ddl\\ sample args=noargs.ddl summ=s-summ.ddl} If you want to
+  draw 3 samples for each class in the iris set, try \cmd{stat
+    "data[,1]=iris.ddl summ=s.ddl"\\psample "args=noargs.ddl
+    summ[,1]=s-summ.ddl"}
+\end{description}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

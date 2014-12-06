@@ -1,0 +1,397 @@
+
+#ifndef GLOBDEF_SOURCE
+#define GLOBDEF_SOURCE
+
+#include "dal.hpp"
+#include "globdef.hpp"
+#include "ttime.hpp"
+#include <strstream>
+#include "access.hpp" // g_matrix_cml_separators
+
+namespace Data_Access_Library {
+
+/** Initialisierung globaler Variablen. */
+
+Domain *gp_dm_domains = NULL; ///< domain for domain names (internal use)
+Domain *gp_dm_tables = NULL; ///< domain for tables (internal use)
+Domain *gp_dm_hmask = NULL; ///< domain for input of hierarchy mask (cmdline)
+
+Domain *gp_dm_boolean = NULL; ///< domain for boolean fields
+Domain *gp_dm_direction = NULL; ///< domain for directional fields
+Domain *gp_dm_numeric = NULL; ///< domain for numerical fields
+Domain *gp_dm_timestamp = NULL; ///< domain for temporal fields
+Domain *gp_dm_count = NULL; ///< domain for counter
+Domain *gp_dm_longint = NULL; ///< domain for streampos 
+Domain *gp_dm_labels = NULL; ///< domain for labels 
+
+Domain *gp_dm_fixes = NULL; ///< domain for label prefixes/suffixes
+
+/** Initialize DAL library.
+
+    Several global variables are instantiated and initialized
+    (domains, default values, etc.) */
+
+void
+init_global()
+{
+    INFO(PACKAGE << ' ' << VERSION << " (c) 2001-2002 Frank Hoppner");
+    
+    // we are going to (mis)use integer values to store pointer to
+    // tables and domains, therefore the following must hold, otherwise
+    // things go wrong...
+    INVARIANT(sizeof(void*)==sizeof(int),"assumption for gp_dm_master_table");
+    gp_dm_domains = new Domain;
+    gp_dm_tables = new Domain;
+    gp_dm_hmask = new Domain;
+    gp_dm_hmask->add("*",g_illegal_ix);
+    
+    // fixed domain of boolean values
+    gp_dm_boolean = new Domain("boolean");
+    gp_dm_boolean->add("no",0);
+    gp_dm_boolean->add("yes",1);
+    gp_dm_boolean->add("false",0);
+    gp_dm_boolean->add("true",1);
+    
+    // fixed domain of directional values
+    gp_dm_direction = new Domain("direction");
+    gp_dm_direction->add("forward",0);
+    gp_dm_direction->add("backward",1);
+    gp_dm_direction->add("analysis",0);
+    gp_dm_direction->add("synthesis",1);
+    
+    gp_dm_numeric = new Domain("numeric");
+    gp_dm_timestamp = new Domain("timestamp");
+    gp_dm_count = new Domain("count");
+    
+    gp_dm_longint = new Domain("longint");
+    gp_dm_longint->precision() = 20;
+    
+    // label domain in mixed mode; numbers can be considered as labels
+    // (should have not default content, otherwise iteration over domain
+    // yields inconsistent results (cf. group command))
+    gp_dm_labels = new Domain("labels",false);
+    
+    // prefix and suffix domain
+    gp_dm_fixes = new Domain("fixes");
+    gp_dm_fixes->add("DROP"); // DROP_SUFFIX=0
+    gp_dm_fixes->add("NONE"); // NO_SUFFIX=1
+    
+    // set default value for indices
+    index_type::set_global_default(g_illegal_ix);
+    // set default value for integer fields (0, false if used as boolean)
+    int_type::set_global_default(0);
+    // set default value for real-valued fields
+    real_type::set_global_default(0);
+    
+    // initialize random number generator via microseconds
+    {
+	long sec,usec; 
+	get_1970_time(actual_time(),sec,usec);
+	srand( ((unsigned int)usec)%1023 );
+    }
+    
+}
+    
+/** Erstelle ein neues Label aus einem alten \c label durch
+    Hinzufuegen eines \c prefix. Das neue Label ist in derselben
+    Domain wie das alte \c label. */
+    
+int combine_label_prefix(const int_type& prefix,int_type& label)
+{
+    INVARIANT(prefix.context()->domain()==gp_dm_fixes,"prefix/suffix-domain expected");
+    if (prefix.val()==NO_SUFFIX) return label.val();
+    
+    const string *p_prefix = prefix.context()->domain()->identifier(prefix.val());
+    if (p_prefix==NULL) return label();
+    
+    string newlabel = *p_prefix;
+    newlabel += '-';
+    newlabel += *(label.context()->domain()->identifier(label.val()));
+    return label.context()->domain()->add(newlabel);
+}
+
+int combine_label_suffix(int_type& label,const int_type& suffix)
+{
+    INVARIANT(suffix.context()->domain()==gp_dm_fixes,"suffix-domain expected");
+    if (suffix.val()==NO_SUFFIX) return label.val();
+    
+    const string *p_suffix = suffix.context()->domain()->identifier(suffix.val());
+    if (p_suffix==NULL) return label();
+    
+    string newlabel = *(label.context()->domain()->identifier(label.val()));
+    newlabel += '-';
+    newlabel += *p_suffix;
+    return label.context()->domain()->add(newlabel);
+}
+
+void
+info(
+    ostream& os
+    )
+{
+    os << endl << "###" << endl << "### TABLES" << endl << "###" << endl << endl;
+    for (Domain::const_iterator i = gp_dm_tables->begin();i!=gp_dm_tables->end();++i)
+    { ((BaseTable*)((*i).second))->info(os); os << endl; }
+    
+    os << endl << "###" << endl << "### DOMAINS" << endl << "###" << endl << endl;
+    for (Domain::const_iterator i = gp_dm_domains->begin();i!=gp_dm_domains->end();++i)
+    { ((Domain*)((*i).second))->info(os); os << endl; }
+}
+
+/** Evaluate a command from the command line. Such a command is the
+    longest contiguous string without blank characters.
+
+    [1] data/label<x.ddl/model>data/model
+    
+    Das Feld <label> in der Tabelle <data> wird aus dem <model> Feld
+    in "x.ddl" gelesen. Die Ausgabe wird durch dieses Kommando nicht
+    vorgegeben, durch die Angabe des Tabellennamen <data> wird der
+    (vielleicht vorher gesetzte) Ausgabedateiname beibehalten. Die
+    Ausgabe erfolgt ebenfalls mit dem Tag <model>. */
+
+void
+evaluate_command(
+    istream &is
+    )
+{
+    LOG_FUNCTION("DAL","evaluate_command","");
+    
+    string table,field,name;
+    Context *p_context;
+    
+    // TABLENAME(*,*)@LEVEL:MODIFIER<INFILE/name@xxx>OUTFILE/name
+    
+    // Table/Domain-Name auswerten
+    read_word_break(is," [(:<>=/@",table);
+    BaseTable *p_table = get_table(table);
+    if (p_table==NULL) 
+    { 
+	Domain *p_domain = get_domain(table);
+	if (p_domain!=NULL)
+	{ 
+	    // Domain-Syntax: "numeric<x.ddl"
+	    if (is_followed_by(is,'<',false))
+	    {
+		read_word_break(is," @",name);
+		// Bezeichnerdatei auslesen
+		SimpleTable ident(cMASTER,table);
+		ident.context()->infile() = name;
+		string_type lab(&ident,cREADOUT|cSHARED,"label");
+		int_type value(&ident,cREADOUT|cSHARED,"value");
+		while (!ident.done())
+		{
+		    ident.pop();
+		    p_domain->add(lab.val(),value.val());
+		}
+	    }
+	    // set output precision 
+	    if (is_followed_by(is,'@',false))
+	    {
+		int prec; is >> prec;
+		if ((prec>0)&&(prec<20)) p_domain->precision()=prec;
+	    }
+	}
+	else
+	{ 
+	    WARNING("<"<<table<<"> unknown"); return;
+	}
+	
+	return;
+    } // if (p_table==NULL)
+    p_context = p_table->context();
+    
+    // Hierarchie-Bezeichner auswerten
+    if (is_followed_by(is,g_matrix_cml_separators.m_seq_begin))
+    {
+	// Hierarchie-Maske einlesen
+	SymbolicIO<int> io(gp_dm_hmask);
+	matrix_read(is,p_context->hmask(),io,&g_matrix_cml_separators);
+
+	// Der Hierarchie kann ein Iterator-Bezeichner folgen (default 1)
+	if (is_followed_by(is,'@',false))
+	    is >> p_context->istep();
+	else
+	    p_context->istep()=1;
+    }
+    
+    // Table-Modifier auswerten
+    if (is_followed_by(is,':',false))
+    {
+	char c; bool done=false;
+	do 
+	{
+	    is.get(c);
+	    if (is.good()) switch (c)
+	    {
+		case 's' :
+		    CLEAR_TAG(p_table->context()->mode(),cMULTITABLE); break;
+		case 'f' :
+		    SET_TAG(p_table->context()->mode(),cFLAT); break;
+		case '<' :
+		case '=' :
+		case '>' :
+		    done=true; break; // Folgezeichen fuer Ein/Ausgabeumleitung
+		default :
+		    INFO("unknown table modifier "<<c); done=true; break;
+	    }
+	    done |= !is.good() || is.eof();
+	}
+	while (!done);
+	is.putback(c);
+    }
+    
+    // Optionale Feldangabe zum Table?
+    abstract_data_type *p_field = NULL;
+    if (is_followed_by(is,'/',false))
+    { 
+	read_word_break(is," :<>=/",field);
+	p_field = p_table->get_field(field);
+	
+	// Feld-Modifier auswerten
+	if (is_followed_by(is,':',false))
+	{
+	    char c; bool done=false;
+	    do 
+	    {
+		is.get(c);
+		if (is.good()) switch (c)
+		{
+		case 'q' : // quiet : Feld nicht zurueckschreiben
+		    if (p_field!=NULL) CLEAR_TAG(p_field->context()->mode(),cWRITEBACK); 
+		    break;
+		case 'w' : // write : Feld zurueckschreiben
+		    if (p_field!=NULL) SET_TAG(p_field->context()->mode(),cWRITEBACK);
+		    break;
+		case 'c' : // copy : Feld lesen + zurueckschreiben
+		    if (p_field!=NULL) // wenn Feld bekannt, dann :w statt :c
+			SET_TAG(p_field->context()->mode(),cWRITEBACK);
+		    else
+			// wir legen neue Domain an, damit nicht
+			// versehentlich Zahlenwerte als symbolische
+			// Werte am Ende der Kopieraktion stehen
+			p_field = new matrix_type(p_table,cREADOUT|cWRITEBACK|cSHARED,field,new Domain(field)); 
+		    break;
+		case '<' :
+		case '=' :
+		case '>' :
+		    done=true; break; // Folgezeichen fuer Ein/Ausgabeumleitung
+		default :
+		    INFO("unknown field modifier "<<c); done=true; break;
+		}
+		done |= !is.good() || is.eof();
+	    }
+	    while (!done);
+	    is.putback(c);
+	}
+	
+	// Wenn das Feld nicht existiert, dann war's das. (Abbruch erst
+	// hier, weil bei :c Modifier das Feld neu eingefuegt werden
+	// koennte.
+	if (p_field==NULL) 
+	{ 
+	    WARNING("no field <"<<field<<"> in table <"<<table<<">"); 
+	    return; 
+	}
+	
+	// Default-Wert fuer Feld?
+	if (is_followed_by(is,'=',false))
+	{
+	    read_word_break(is," ",name);
+	    p_field->set_context_default(name,&g_matrix_cml_separators);
+	    return;
+	}
+	else
+	    p_context = p_field->context();
+    }
+    
+    // Eingabedatei fuer Table auswerten
+    if (is_followed_by(is,'<',false))
+    {
+	// Folgt Dateiname?
+	if (!is_followed_by(is,'/'))
+	{
+	    read_word_break(is,"/>:@",name); // infile lesen
+	    if (name!=table) p_context->infile() = name;
+	}
+	// Eingabe-Feldname vorhanden?
+	if (is_followed_by(is,'/',false)) 
+	{
+	    read_word_break(is," >:@",name); // intag lesen
+	    p_context->intag() = name;
+	}
+	// Positionsangabe vorhanden?
+	if (is_followed_by(is,':',false))
+	{
+	    is >> p_context->offset();
+	    is_followed_by(is,'-',false);
+	    is >> p_context->rows();
+	    p_context->cols()=1;
+	}
+	// Selektor vorhanden?
+	if (is_followed_by(is,'@',false))
+	{
+	    matrix_read(is,p_context->select(),StandardIO<int>(),&g_matrix_cml_separators);
+	}
+    }
+    
+    // Ausgabedatei fuer Table auswerten
+    if (is_followed_by(is,'>',false))
+    {
+	// Folgt Dateiname?
+	if (!is_followed_by(is,'/'))
+	{
+	    read_word_break(is,"/",name); // infile lesen
+	    if (name!=table) p_context->outfile() = name;
+	}
+	// Ausgabe-Feldname vorhanden?
+	if (is_followed_by(is,'/',false)) 
+	{
+	    read_word_break(is," ",name); // intag lesen
+	    p_context->outtag() = name;
+	}
+    }
+}
+  
+
+void evaluate_cmdline(
+    int argc,
+    char** argv
+    )
+{
+    
+    string command;
+    for (int i=1;i<argc;++i) 
+    {
+	int j=0,l=strlen(argv[i]);
+	while (j<l)
+	{  
+	    command.erase();
+	    while ((j<l)&&(!isspace(argv[i][j]))) { command += argv[i][j]; ++j; }
+	    while ((j<l)&&(isspace(argv[i][j]))) { ++j; }
+	    if (!command.empty()) 
+	    { istrstream is(command.c_str()); evaluate_command(is); }
+	}
+    }
+    
+}
+
+void mem_info(
+    ostream& os
+    )
+{
+    os << " i:"; data_type<int>::mem_info(os);
+    os << " x:"; data_type<ix_type>::mem_info(os);
+    os << " d:"; data_type<double>::mem_info(os);
+    os << " s:"; data_type<string>::mem_info(os);
+    os << " ti:"; data_type<DynTuple<int> >::mem_info(os);
+    os << " tx:"; data_type<DynTuple<ix_type> >::mem_info(os);
+    os << " td:"; data_type<DynTuple<double> >::mem_info(os);
+    os << " mi:"; data_type<DynMatrix<int> >::mem_info(os);
+    os << " md:"; data_type<DynMatrix<double> >::mem_info(os);
+    os << endl; 
+}
+
+
+}; // namespace
+
+#endif // GLOBDEF_SOURCE

@@ -1,0 +1,24 @@
+
+# data/inkey:q in order to surpress the origkey output 
+# (whose values will be different from run to run)
+
+rm x.ddl
+../../src/sample "data<data.ddl>x.ddl data/inkey:q args/count=2 args(*)<args.ddl"
+diff --ignore-all-space --ignore-blank-lines x.ddl subset.ddl
+
+# test hierarchy selection
+rm s.ddl
+../../src/stat "data(1)<x.ddl data/value</key" > s.ddl
+echo "next test" >> s.ddl
+../../src/stat "data(1,*)<x.ddl data/value</key" >> s.ddl
+echo "next test" >> s.ddl
+../../src/stat "data(2)<x.ddl data/value</key" >> s.ddl
+echo "next test" >> s.ddl
+../../src/stat "data(2,*)<x.ddl data/value</key" >> s.ddl
+echo "next test" >> s.ddl
+../../src/stat "data(*,1)<x.ddl data/value</key" >> s.ddl
+echo "next test" >> s.ddl
+../../src/stat "data(*,3)<x.ddl data/value</key" >> s.ddl
+echo "next test" >> s.ddl
+
+diff --ignore-all-space --ignore-blank-lines s.ddl hierselect.ddl

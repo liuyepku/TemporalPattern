@@ -1,0 +1,72 @@
+
+/** \file nnc.cpp
+    \author Frank Hoppner <frank.hoeppner@ieee.org>
+    \brief Simple 1-Nearest Neighbour Classificator.
+
+    The examples \c <classified/value> with class label \c
+    <classified/class> are used to predict the class of the examples
+    \c <unclassified/value>. The predicted class is taken from the
+    nearest classified example (using the Euclidean distance).
+
+    Recognized fields:
+    <ul>
+
+    <li> \c <classified/value> (numeric, in) : Feature vector for
+    classified example. </li>
+
+    <li> \c <classified/class> (labels, in) : Class. </li>
+
+    <li> \c <unclassified/value> (numeric, in) : Feature vector for
+    unclassified data. </li>
+
+    <li> \c <unclassified/class> (labels, out) : Predicted
+    class. </li>
+
+    </ul>
+
+*/
+
+#ifndef EXCLUDE_FROM_TUTORIAL
+
+#include "dal.hpp"
+#include "algorithm.hpp"
+
+using namespace Data_Access_Library;
+using namespace Data_Analysis_Library;
+
+int main(
+    int argc, 
+    char** argv
+    )
+{
+    LOGTRACE_INIT("dal.log","dal.id");                  // initialize debugging
+    init_global();                               // initialize global variables
+    INFO("executing 1-nnc");
+    
+    /*B*/MasterTable data(cMASTER,"unclassified");              // table "data"
+    tuple_type value(&data,cREADOUT,"value",gp_dm_numeric);
+    int_type predclass(&data,cWRITEBACK,"class",gp_dm_labels);
+    
+    /*B*/MasterTable train(cMASTER,"classified");      // table "training data"
+    tuple_type trainvalue(&train,cREADOUT,"value",gp_dm_numeric);
+    int_type trainclass(&train,cREADOUT,"class",gp_dm_labels);
+    
+    real_type dist(NULL,cVOID,"distance");                         // temporary
+    
+    evaluate_cmdline(argc,argv);
+    
+    Algorithm *p =
+	seq(fetch(&data),
+	    embed_loop(fetch(&train),
+		       euclidsqdist(&dist,&trainvalue,&value),
+		       selectmin(&dist,&trainclass,&predclass,
+				 writeback(&data))));
+
+
+    data.init(); train.init();
+    iterate_algorithm(&p);
+    p->loop();
+    /*data.submit();*/ data.close(); /*train.submit();*/ train.close();
+}
+
+#endif // EXCLUDE_FROM_TUTORIAL

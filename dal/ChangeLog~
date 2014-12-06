@@ -1,0 +1,79 @@
+2001-11-13  Frank Hoeppner  <hoeppner@local>
+
+	* complete rewrite of DAL kernel
+
+2001-11-05  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* cells.cpp, cells.hpp, iterator.cpp: Input and output files can
+	be specified explicitly via "data<input.ddl>output.tab", where
+	input.ddl is the input file and output.tab the output file.
+
+	* datatype.cpp: selections from DDL fields are also possible, a
+	selection index of 0 leads to a constant attribute value 1
+
+2001-10-15  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* fcm.cpp, cells.cpp, iterator.cpp, dal.hpp: Replaced MULTILOOP by
+	DELAYED bit. SHARED state is automatically removed for
+	DELAYED+WRITEBACK data. (See also comments [DELAYED].)
+
+	* sample.cpp: Added (hierarchical) indentation for grid sampling
+	(every full iteration in first dimension in separate data
+	collection).
+
+2001-10-12  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* sample.cpp: Added GRID mode (replaces functionality of mesh
+	program in fc package).
+
+2001-10-08  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* access.cpp: empty lines in tables without hierarchies have
+	hierarchy level 1, non-empty lines 2. This enables minimal
+	hierarchical operations with flat table files.
+
+2001-10-05  Frank Hoeppner  <frank.hoeppner@ieee.org> (0.1.4)
+
+	* access.cpp, access.hpp, iterator.cpp, cells.cpp: buffered
+	iterator was not yet able to handle mark/rewind. Fixed.
+
+2001-08-29  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* fc.cpp: bugfix in algorithm by Gustafson and Kessel (center
+	vector of previous iteration has been used for update covariance
+	matrix; now center vector of current iteration is used)
+
+2001-07-22  Frank Hoeppner  <frank.hoeppner@ieee.org> (0.1.3)
+
+	* adopted to new logtrace version
+
+2001-06-07  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* access.cpp: In a .tab file, the last line marked by '#' contains
+	the header information (not the first). This has been changed to
+	be compatible with other programs, like gnuplot for instance.
+
+2001-04-11  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* dal.hpp, content.cpp, cells.cpp, access.hpp, access.cpp, id.cpp,
+	iterator.cpp: new file types ".ddl-l" and ".tab-l" for lists of
+	".ddl" and ".tab" files. Every word in the list file will be used
+	as a filename (extension will be added automatically), all these
+	files will be read consecutively, as if the data therein would be
+	in a single file. Currently, mark/rewind is NOT supported for
+	these files! These files are read-only, if you produce some output
+	using a list file as input, the output will be written into a
+	conventional ".ddl" or ".tab" file.
+	
+	* sample.cpp: changed random number handling in sub_sampling(),
+	random seed initialized via seconds since 1970
+
+2001-04-10  Frank Hoeppner  <frank.hoeppner@ieee.org> (0.1.2)
+
+	* first pre-release
+
+2001-02-01  Frank Hoeppner  <frank.hoeppner@ieee.org>
+
+	* Introduced index of collection to synchronize collections whose
+	fields comes from multiple files.
+

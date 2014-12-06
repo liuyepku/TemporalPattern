@@ -1,0 +1,60 @@
+
+/** \file sort.cpp
+    \author Frank Hoppner <frank.hoeppner@ieee.org>
+    \brief Sorting lexicographically.
+
+    Reads and writes a \c <data> collection, the output is sorted
+    lexicographically. The fields in the \c <data> collection must be
+    contained in a single data file, no hierarchies are supported.
+
+    Recognized fields:
+    <ul>
+
+    <li> \c <data/key> (numeric, in) : Numerical field used for
+    lexicographical sorting. </li>
+
+    <li> \c <args/key2> (numeric, in) : Numerical field used for
+    sorting. Both keys are concatenated to a single vector. </li>
+
+    </ul>
+
+    Usage: By default, the key fields are read but not written. To
+    write them use the :w field-modifier.
+
+    sort "data<iris.ddl data/key:w</class>/class data/key2:w</value>/value"
+
+*/
+
+#ifndef EXCLUDE_FROM_TUTORIAL
+
+#include "dal.hpp"
+#include "algorithm.hpp"
+
+using namespace Data_Access_Library;
+using namespace Data_Analysis_Library;
+
+int main
+  (
+  int argc, 
+  char** argv
+  )
+  {
+  LOGTRACE_INIT("dal.log","dal.id");                    // initialize debugging
+  init_global();                                 // initialize global variables
+  INFO("sort ("<<PACKAGE<<' '<<VERSION<<')');
+
+  SimpleTable data(cMASTER,"data");                               // data table
+  tuple_type key(&data,cREADOUT,"key",gp_dm_numeric);               // sort key
+  tuple_type key2(&data,cREADOUT,"key2",gp_dm_numeric);     // optional 2nd key
+
+  evaluate_cmdline(argc,argv);                          // process user demands
+
+  Algorithm *p = seq(sorted_fetch(&data,&key,&key2),
+		     writeback(&data));
+
+  data.init();
+  p->loop();
+  data.close();
+  };
+
+#endif // EXCLUDE_FROM_TUTORIAL

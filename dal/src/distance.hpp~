@@ -1,0 +1,127 @@
+
+/*  Copyright     : Copyright (C) 2000, 2001 Frank Hoeppner
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public License
+    as published by the Free Software Foundation; either version 2.1
+    of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    02111-1307, USA.  */
+
+/** \file distance.hpp
+    \author Frank Hoeppner <frank.hoeppner@ieee.org>
+
+    Distanzfunktionen.
+*/
+
+#ifndef DISTANCE_HEADER
+#define DISTANCE_HEADER
+
+#include "dal.hpp"
+
+using namespace Data_Access_Library;
+namespace Data_Analysis_Library {
+
+//////////////////////////////////////////////////////////////////
+
+/** (Quadratischer) Euklidischer Abstand. Trivialer Algorithmus, aber
+    nuetzlich zur Verknuepfung mit anderen Algorithmen. */
+
+class EuclideanDistance
+  : public Algorithm
+  {
+  public:
+    EuclideanDistance(real_type*,tuple_type*,tuple_type*,
+      Algorithm* = NULL);
+    virtual abstract_data_type* run();
+  private:
+    real_type *mp_dist;
+    tuple_type *mp_x,*mp_y;
+  };
+
+/** Inline-Erzeugung eines EuclideanDistance-Algorithmus. */
+
+inline EuclideanDistance* 
+euclidsqdist(real_type *d,tuple_type *x,tuple_type *y,Algorithm *p=NULL)
+  { return new EuclideanDistance(d,x,y,p); }
+
+//////////////////////////////////////////////////////////////////
+
+/** Skalarprodukt als Abstand. */
+
+class ScalarProdDistance
+  : public Algorithm
+  {
+  public:
+    ScalarProdDistance(real_type*,tuple_type*,tuple_type*,
+      Algorithm* = NULL);
+    virtual abstract_data_type* run();
+  private:
+    real_type *mp_dist;
+    tuple_type *mp_x,*mp_y;
+  };
+
+/** Inline-Erzeugung eines ScalarProdDistance-Algorithmus. */
+
+inline ScalarProdDistance* 
+dotdist(real_type *d,tuple_type *x,tuple_type *y,Algorithm *p=NULL)
+  { return new ScalarProdDistance(d,x,y,p); }
+
+//////////////////////////////////////////////////////////////////
+
+/** Skalierte (quadratische) Euklidische Distanz. */
+
+class ScaledEuclideanDistance
+  : public Algorithm
+  {
+  public:
+    ScaledEuclideanDistance(real_type*,tuple_type*,tuple_type*,
+      real_type*,Algorithm* = NULL);
+    virtual abstract_data_type* run();
+  private:
+    real_type *mp_dist,*mp_yscale;
+    tuple_type *mp_x,*mp_y;
+  };
+
+/** Inline-Erzeugung eines ScaledEuclideanDistance-Algorithmus. */
+
+inline ScaledEuclideanDistance* 
+dotdist(real_type *d,tuple_type *x,tuple_type *y,
+        real_type *ys,Algorithm *p=NULL)
+  { return new ScaledEuclideanDistance(d,x,y,ys,p); }
+
+///////////////////////////////////////////////////////////////////
+
+/** Mahalanobis Distanz. */
+
+class MahalanobisDistance
+  : public Algorithm
+  {
+  public:
+    MahalanobisDistance(real_type*,tuple_type*,tuple_type*,
+      matrix_type*,Algorithm* = NULL);
+    virtual abstract_data_type* run();
+  private:
+    real_type *mp_dist;
+    tuple_type *mp_x,*mp_y;
+    matrix_type *mp_normmat;
+  };
+
+/** Inline-Erzeugung eines ScaledEuclideanDistance-Algorithmus. */
+
+inline MahalanobisDistance* 
+matdist(real_type *d,tuple_type *x,tuple_type *y,
+        matrix_type *nm,Algorithm *p=NULL)
+  { return new MahalanobisDistance(d,x,y,nm,p); }
+
+}; // namespace
+
+#endif

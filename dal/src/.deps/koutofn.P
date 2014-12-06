@@ -1,0 +1,203 @@
+koutofn.lo koutofn.o : koutofn.cpp algorithm.hpp /usr/include/g++/iostream \
+ /usr/include/g++/iostream.h /usr/include/g++/streambuf.h \
+ /usr/include/libio.h /usr/include/_G_config.h \
+ /usr/include/bits/types.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/stddef.h \
+ /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h \
+ /usr/include/wchar.h /usr/include/bits/wchar.h /usr/include/gconv.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/stdarg.h \
+ /usr/include/stdlib.h /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h dal.hpp \
+ ../config.h /home/hoeppner/my/local/include/ustream.hpp \
+ /home/hoeppner/my/local/include/define.hpp \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/limits.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/float.h \
+ /usr/include/math.h /usr/include/bits/huge_val.h \
+ /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
+ /home/hoeppner/my/local/include/defbool.hpp \
+ /usr/include/g++/stl_config.h /usr/include/string.h \
+ /home/hoeppner/my/local/include/Chars.hpp /usr/include/stdio.h \
+ /usr/include/bits/stdio_lim.h /usr/include/g++/string \
+ /usr/include/g++/std/bastring.h /usr/include/g++/cstddef \
+ /usr/include/g++/std/straits.h /usr/include/g++/cctype \
+ /usr/include/ctype.h /usr/include/g++/cstring \
+ /usr/include/g++/alloc.h /usr/include/g++/stl_alloc.h \
+ /usr/include/assert.h /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/signal.h /usr/include/bits/initspin.h \
+ /usr/include/bits/sigthread.h /usr/include/g++/iterator \
+ /usr/include/g++/stl_relops.h /usr/include/g++/stl_iterator.h \
+ /usr/include/g++/std/bastring.cc /usr/include/g++/map \
+ /usr/include/g++/stl_tree.h /usr/include/g++/stl_algobase.h \
+ /usr/include/g++/stl_pair.h /usr/include/g++/type_traits.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/new.h \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/new \
+ /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/exception \
+ /usr/include/g++/stl_construct.h /usr/include/g++/stl_function.h \
+ /usr/include/g++/stl_map.h /usr/include/g++/stl_multimap.h \
+ /home/hoeppner/my/local/include/stlutil.hpp \
+ /usr/include/g++/functional /home/hoeppner/my/local/include/ttime.hpp \
+ matvec.hpp matvecop.hpp /usr/include/g++/algorithm \
+ /usr/include/g++/stl_uninitialized.h /usr/include/g++/stl_tempbuf.h \
+ /usr/include/g++/stl_algo.h /usr/include/g++/stl_heap.h \
+ /usr/include/g++/fstream.h logtrace.h \
+ /home/hoeppner/my/local/include/logstream.hpp \
+ /usr/include/g++/strstream /usr/include/g++/strstream.h \
+ /usr/include/g++/strfile.h /usr/include/g++/iomanip \
+ /usr/include/g++/iomanip.h /usr/include/g++/list \
+ /usr/include/g++/stl_list.h primitives.hpp /usr/include/g++/complex.h \
+ /usr/include/g++/complex /usr/include/g++/std/complext.h \
+ /usr/include/g++/cmath /usr/include/g++/std/fcomplex.h \
+ /usr/include/g++/std/dcomplex.h /usr/include/g++/std/ldcomplex.h \
+ mread.hpp /home/hoeppner/my/local/include/stlstream.hpp \
+ /usr/include/g++/list.h /usr/include/g++/algobase.h \
+ /usr/include/g++/pair.h /usr/include/g++/iterator.h \
+ /usr/include/g++/function.h /usr/include/g++/stl_raw_storage_iter.h \
+ /usr/include/g++/vector.h /usr/include/g++/stl_vector.h \
+ /usr/include/g++/set.h /usr/include/g++/tree.h \
+ /usr/include/g++/stl_set.h /usr/include/g++/map.h \
+ /usr/include/g++/multimap.h /usr/include/g++/multiset.h \
+ /usr/include/g++/stl_multiset.h /usr/include/g++/deque \
+ /usr/include/g++/stl_deque.h /usr/include/g++/queue \
+ /usr/include/g++/stl_bvector.h /usr/include/g++/stl_queue.h \
+ /home/hoeppner/my/local/include/bool3.hpp
+koutofn.cpp :
+algorithm.hpp :
+/usr/include/g++/iostream :
+/usr/include/g++/iostream.h :
+/usr/include/g++/streambuf.h :
+/usr/include/libio.h :
+/usr/include/_G_config.h :
+/usr/include/bits/types.h :
+/usr/include/features.h :
+/usr/include/sys/cdefs.h :
+/usr/include/gnu/stubs.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/stddef.h :
+/usr/include/bits/pthreadtypes.h :
+/usr/include/bits/sched.h :
+/usr/include/wchar.h :
+/usr/include/bits/wchar.h :
+/usr/include/gconv.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/stdarg.h :
+/usr/include/stdlib.h :
+/usr/include/sys/types.h :
+/usr/include/time.h :
+/usr/include/endian.h :
+/usr/include/bits/endian.h :
+/usr/include/sys/select.h :
+/usr/include/bits/select.h :
+/usr/include/bits/sigset.h :
+/usr/include/bits/time.h :
+/usr/include/sys/sysmacros.h :
+/usr/include/alloca.h :
+dal.hpp :
+../config.h :
+/home/hoeppner/my/local/include/ustream.hpp :
+/home/hoeppner/my/local/include/define.hpp :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/limits.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/syslimits.h :
+/usr/include/limits.h :
+/usr/include/bits/posix1_lim.h :
+/usr/include/bits/local_lim.h :
+/usr/include/linux/limits.h :
+/usr/include/bits/posix2_lim.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/float.h :
+/usr/include/math.h :
+/usr/include/bits/huge_val.h :
+/usr/include/bits/mathdef.h :
+/usr/include/bits/mathcalls.h :
+/home/hoeppner/my/local/include/defbool.hpp :
+/usr/include/g++/stl_config.h :
+/usr/include/string.h :
+/home/hoeppner/my/local/include/Chars.hpp :
+/usr/include/stdio.h :
+/usr/include/bits/stdio_lim.h :
+/usr/include/g++/string :
+/usr/include/g++/std/bastring.h :
+/usr/include/g++/cstddef :
+/usr/include/g++/std/straits.h :
+/usr/include/g++/cctype :
+/usr/include/ctype.h :
+/usr/include/g++/cstring :
+/usr/include/g++/alloc.h :
+/usr/include/g++/stl_alloc.h :
+/usr/include/assert.h :
+/usr/include/pthread.h :
+/usr/include/sched.h :
+/usr/include/signal.h :
+/usr/include/bits/initspin.h :
+/usr/include/bits/sigthread.h :
+/usr/include/g++/iterator :
+/usr/include/g++/stl_relops.h :
+/usr/include/g++/stl_iterator.h :
+/usr/include/g++/std/bastring.cc :
+/usr/include/g++/map :
+/usr/include/g++/stl_tree.h :
+/usr/include/g++/stl_algobase.h :
+/usr/include/g++/stl_pair.h :
+/usr/include/g++/type_traits.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/new.h :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/new :
+/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/exception :
+/usr/include/g++/stl_construct.h :
+/usr/include/g++/stl_function.h :
+/usr/include/g++/stl_map.h :
+/usr/include/g++/stl_multimap.h :
+/home/hoeppner/my/local/include/stlutil.hpp :
+/usr/include/g++/functional :
+/home/hoeppner/my/local/include/ttime.hpp :
+matvec.hpp :
+matvecop.hpp :
+/usr/include/g++/algorithm :
+/usr/include/g++/stl_uninitialized.h :
+/usr/include/g++/stl_tempbuf.h :
+/usr/include/g++/stl_algo.h :
+/usr/include/g++/stl_heap.h :
+/usr/include/g++/fstream.h :
+logtrace.h :
+/home/hoeppner/my/local/include/logstream.hpp :
+/usr/include/g++/strstream :
+/usr/include/g++/strstream.h :
+/usr/include/g++/strfile.h :
+/usr/include/g++/iomanip :
+/usr/include/g++/iomanip.h :
+/usr/include/g++/list :
+/usr/include/g++/stl_list.h :
+primitives.hpp :
+/usr/include/g++/complex.h :
+/usr/include/g++/complex :
+/usr/include/g++/std/complext.h :
+/usr/include/g++/cmath :
+/usr/include/g++/std/fcomplex.h :
+/usr/include/g++/std/dcomplex.h :
+/usr/include/g++/std/ldcomplex.h :
+mread.hpp :
+/home/hoeppner/my/local/include/stlstream.hpp :
+/usr/include/g++/list.h :
+/usr/include/g++/algobase.h :
+/usr/include/g++/pair.h :
+/usr/include/g++/iterator.h :
+/usr/include/g++/function.h :
+/usr/include/g++/stl_raw_storage_iter.h :
+/usr/include/g++/vector.h :
+/usr/include/g++/stl_vector.h :
+/usr/include/g++/set.h :
+/usr/include/g++/tree.h :
+/usr/include/g++/stl_set.h :
+/usr/include/g++/map.h :
+/usr/include/g++/multimap.h :
+/usr/include/g++/multiset.h :
+/usr/include/g++/stl_multiset.h :
+/usr/include/g++/deque :
+/usr/include/g++/stl_deque.h :
+/usr/include/g++/queue :
+/usr/include/g++/stl_bvector.h :
+/usr/include/g++/stl_queue.h :
+/home/hoeppner/my/local/include/bool3.hpp :

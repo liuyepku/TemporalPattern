@@ -1,0 +1,65 @@
+
+#ifndef TABLE_HEADER
+#define TABLE_HEADER
+
+#include "dal.hpp"
+
+namespace Data_Access_Library {
+
+//////////////////////////////////////////////////////////////
+// Record
+
+/** Eine Satz von Feldern.
+
+    Eine Collection stellt eine Menge von Feldern dar. Neben dem
+    obligatorischen Context wird eine Liste von
+    abstract_data_type-Zeigern auf die untergeordneten Felder
+    gefuehrt. Der jeweilige Feldinhalt ist durch die Indizes der
+    Felder in den jeweiligen Repositories eindeutig bestimmt. Ein
+    Vektor aus diesen Indizes (zusammen mit ein paar anderen
+    Informationen) bildet den "Inhalt" der Collection. 
+
+    (index,level,empty,indices....) 
+
+    Fuer alle Tuple ist der Default-Wert das leere Tupel, in diesem
+    Fall bilden wir den aktuellen Index/Level auf den illegalen
+    Index/Level ab. 
+
+    Anfangs is der mode VOID, durch Aufruf der init() Methode (das
+    geschieht durch ein set_type beim ersten Zugriff auf den Record)
+    wird bestimmt, ob der Record READOUT und/oder WRITEBACK ist,
+    etc. Nachdem das festgestellt wurde, werden Index- und
+    Parent-Contexte und Felder angelegt. Wenn wir bspw. keine Daten
+    lesen, brauchen wir auch kein Feld fuer den Eingabeindex.
+
+    Diese Klasse wird nicht vom Benutzer instantiiert, sie stellt eine
+    Zwischenschicht zwischen set_type und den einzelnen Feldern
+    dar. */
+
+class record_type
+  : public data_type< DynTuple<ix_type> > 
+{
+public:
+  explicit record_type(Context *ap_context);
+  virtual ~record_type();
+
+  void attach(abstract_data_type *ap_value);
+  virtual void info(ostream& os) const;
+  virtual void load_default();
+  virtual int size() const { return m_size; }
+
+  virtual void load(word); ///< Variable mit Wert aus Repository laden
+  virtual void copy(ix_type); ///< Kopie des Records anlegen (ohne Original aus Rep. zu nehmen)
+  virtual void free(); ///< Variable auf Default setzen, Repository freigeben
+  virtual void free(ix_type ix); ///< Wert aus Repository freigeben
+  void init();
+  void store();
+
+  //protected:
+  adtp_list m_fields;
+  int m_size;
+};
+
+} // Data_Access_Library
+
+#endif // TABLE_HPP

@@ -1,0 +1,117 @@
+
+
+/** \file koutofn.cpp
+    \author Frank Hoeppner <frank.hoeppner@ieee.org> */
+
+#ifndef KOUTOFN_SOURCE
+#define KOUTOFN_SOURCE
+
+#include "algorithm.hpp"
+#include "logtrace.h"
+
+using namespace Data_Access_Library;
+namespace Data_Analysis_Library {
+
+/** \class FilterKOutOfN
+    \brief Selecting k out of n step() calls.
+
+    This multi-step algorithm selects k step()-calls out of a total
+    number of n step() calls (this happens in init()). During the
+    execution of this algorithm only in the selected cases the step()
+    method of the successor will be invoked. */
+
+/** Constructor. The \c incl denotes a variable which is 1 if the
+    step() has been selected and otherwise zero. Apparently this makes
+    only sense in combination with another parameter, which is the
+    boolean variabel \c subset. If it is set to false, the step()
+    method of the successor is invoked every time (and not only in k
+    out of n cases).  */
+
+FilterKOutOfN::FilterKOutOfN(
+    int_type *subset, ///< call successor k times only?
+    int_type *k, ///< how many (randomly selected) successor calls?
+    int_type *n, ///< total number of calls
+    int_type *incl, ///< boolean variable denoting if included in selection
+    AlgorithmMS *p
+    )
+    : AlgorithmMS(p)
+    , mp_subset(subset)
+    , mp_k(k)
+    , mp_n(n)
+    , mp_included(incl)
+{}
+
+FilterKOutOfN::~FilterKOutOfN()
+{}
+
+/** Select k out of n. The selection of k out of n values is done
+    here. When init() is called, the values of arguments k and n must
+    be loaded.  */
+
+void
+FilterKOutOfN::init()
+{
+    LOG_METHOD("DAL","FilterKOutOfN","init","");
+    
+    // wenn k > n/2 dann aussuchen, was NICHT gewaehlt wurde
+    int k=mp_k->val(),n=mp_n->val();
+    if (k==0) WARNING("do you really need an empty selection?");
+    if (n<k) ERROR("N="<<n<<" must be larger than k="<<k);
+    if (k > n/2) { k = n-k; m_inverted=true; } else m_inverted=false;
+    
+    // k Elemente zufaellig auswaehlen
+    m_selection.clear();
+    for (int i=0;i<k;++i)
+	m_selection.insert(static_cast<int>(1.0*rand()/RAND_MAX*n));
+    
+    // falls Zahlen doppelt, kann |selection| zu klein sein
+    while (m_selection.size()!=static_cast<word>(k))
+	m_selection.insert(static_cast<int>(1.0*rand()/RAND_MAX*n));
+    //cout << mp_n->val() << m_selection << endl;
+    
+    // Zaehlerei initialisieren
+    m_pos = m_selection.begin();
+    m_ctr=0;
+    
+    if (mp_succ!=NULL) mp_succ->init();
+}
+
+bool3 FilterKOutOfN::step()
+{
+    bool push = false;
+    
+  if (m_pos!=m_selection.end())
+    {
+	
+    if (m_inverted) {
+	if (m_ctr != (*m_pos)) push=true; else ++m_pos;
+    } else {
+	if (m_ctr == (*m_pos)) { push=true; ++m_pos; }
+    }
+    ++m_ctr;
+
+    mp_included->var() = push;
+    }
+
+    // Ausgabe wenn selektiert oder ganze Menge (!subset) gewuenscht
+  // keine weitere Iteration, wenn letztes Element erreicht
+    bool3 stop = (m_pos==m_selection.end()) ? bool3::true3 : bool3::unknown3;
+    if ( (push||(!mp_subset->val())) && (mp_succ!=NULL)) stop|=mp_succ->step();
+    return stop;
+}
+
+/** Return value is always NULL. */
+
+abstract_data_type*
+FilterKOutOfN::done()
+{
+    LOG_METHOD("DAL","FilterKOutOfN","done","");
+    
+    if (mp_succ!=NULL) mp_succ->done();
+    return NULL;
+}
+
+} // namespace
+
+#endif // KOUTOFN_SOURCE
+

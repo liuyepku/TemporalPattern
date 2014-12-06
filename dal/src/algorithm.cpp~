@@ -1,0 +1,513 @@
+
+/** \file algorithm.cpp
+    \author Frank Hoeppner <frank.hoeppner@ieee.org>
+    \brief Implementation of various algorithms. */
+
+#ifndef ALGORITHM_SOURCE
+#define ALGORITHM_SOURCE
+
+#include "algorithm.hpp"
+#include "globdef.hpp"
+
+/** \namespace Data_Analysis_Library
+    \brief Algorithms to be used with DAL. */
+
+using namespace Data_Access_Library;
+namespace Data_Analysis_Library {
+
+//////////////////////////////////////////////////////////////////////
+
+/** \struct Algorithm::term_type
+    \brief Return type for step()-method of Algorithm.
+
+    When running an algorithm, the return value of the step() method
+    indicates whether it should be called once more or not, since the
+    caller of the algorithm does not know how often the step() method
+    shall be invoked.
+
+    We distinguish two different types of algorithms: so-called
+    "one-step algorithms" calculate their result each time they are
+    called, once for each set of input values (e.g. a distance
+    measure). Such an algorithm cannot tell when the iteration shall
+    be terminated, it depends on the number of input records. In this
+    case, the algorithm should return UNKNOWN, which should be
+    interpreted as: "I am finished if everybody else is finished".
+
+    The second type of algorithms are so-called "multi-step
+    algorithms". The algorithm knows itself how often its step()
+    method should be called. An example is an algorithm that iterates
+    over all records in a table, the step() method will be called for
+    each record and we stop when no more records are available. As
+    long as there are records, such an algorithm should return
+    CONTINUE, and finally TERMINATE when the last record has been
+    reached.
+
+    In a chain of algorithms we do not know in advance which algorithm
+    will decide about termination of the step()-loop. The return
+    values of the step() methods are joined (via the join function),
+    such that the final result is TERMINATE if there is at least one
+    algorithm that returned TERMINATE, CONTINUE if there was no
+    TERMINATE but at least one CONTINUE, and UNKNOWN else. We continue
+    to call the step() method while we receive CONTINUE (see run()
+    function). The rationale is the following: A multi-step algorithm
+    should either return CONTINUE or TERMINATE, and thus the finally
+    obtained value is either CONTINUE or TERMINATE. However, if all
+    algorithms are one-step algorithms, all of them will return
+    UNKNOWN. To avoid an endless loop in such a case, we stop the
+    iteration with return value UNKNOWN (all algorithms are finished,
+    no algorithm requires more iterations). */
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class Algorithm
+    \brief Abstract base class for algorithms. 
+
+    Algorithms are executed by calling the initialization method
+    init() once, then the iteration method step() several times, and
+    finally the done() method in which the final result is computed.
+
+    Every algorithm has a successor algorithm, whose init(), step()
+    and done() methods are called in the respective methods of the
+    predecessor. This allows for chaining several multi-step
+    algorithms which will be executed interweaved. Since the chain is
+    build at run-time, this enables (to some extent) self-modifying
+    algorithms.
+
+    The step() method returns a term_type value, which indicates
+    whether the step()-iteration should be stopped or not. See
+    term_type for the details.
+
+    The result of an algorithm is returned by the done() method, but
+    it may also be a NULL pointer if there is no such result. */
+
+Algorithm::~Algorithm() {}
+
+void Algorithm::init() {}
+
+Algorithm::term_type Algorithm::step() { return UNKNOWN; }
+
+void Algorithm::done() {}
+
+void Algorithm::loop()
+{
+    init(); 
+    while (step()==CONTINUE); 
+    done(); 
+}
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class ParallelBind 
+ */
+
+ParallelBind::~ParallelBind()
+{
+    for (alg_list::iterator a=m_succ.begin();a!=m_succ.end();++a)
+	delete (*a);
+    m_succ.clear();
+}
+
+void 
+ParallelBind::init()
+{
+    LOG_METHOD("DAA","ParallelBind","init","");
+
+    for (alg_list::iterator a=m_succ.begin();a!=m_succ.end();++a)
+	(*a)->init();
+}
+
+Algorithm::term_type 
+ParallelBind::step() 
+{
+    LOG_METHOD("DAA","ParallelBind","step","");
+
+    term_type t = UNKNOWN;
+    for (alg_list::iterator a=m_succ.begin();a!=m_succ.end();++a)
+	t = (term_type) max( (int)t, (int)(*a)->step() ); 
+    return t;
+}
+q
+void 
+ParallelBind::done()
+{
+    LOG_METHOD("DAA","ParallelBind","done","");
+
+    for (alg_list::iterator a=m_succ.begin();a!=m_succ.end();++a)
+	(*a)->done();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class Embedding
+    \brief Embeds an algorithm in the step() call.
+
+    The constructor takes an algorithm \c embed and successor
+    algorithm \c succ. Algorithm \c embed will be embedded in the
+    step() method.
+
+\code
+      CALLER      EMBEDDING
+      init() ---> succ.init() --->
+      step() ---> embed.run() -/->
+                  succ.step() --->
+      done() ---> succ.done() --->
+\endcode */
+
+void 
+Embedding::init()
+{
+    LOG_METHOD("DAA","Embedding","init",this);
+
+    if (IS_TAG(m_where,INIT)) 
+    {
+	ParallelBind::init();
+	while (ParallelBind::step()==CONTINUE);
+	ParallelBind::done();
+    }
+}
+
+Algorithm::term_type 
+Embedding::step() 
+{
+    LOG_METHOD("DAA","Embedding","step",this);
+
+    if (IS_TAG(m_where,STEP)) 
+    {
+	ParallelBind::init();
+	while (ParallelBind::step()==CONTINUE);
+	ParallelBind::done();
+    }
+    return UNKNOWN;
+}
+
+void
+Embedding::done()
+{
+    LOG_METHOD("DAA","Embedding","done",this);
+
+    if (IS_TAG(m_where,DONE)) 
+    {
+	ParallelBind::init();
+	while (ParallelBind::step()==CONTINUE);
+	ParallelBind::done();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class ExchangedEmbedding (xembed)
+
+    Suppose you have two nested loops 
+
+\code
+          loop(&range1
+           embed(
+            loop(&range2,
+             alg(...
+          ))))
+\endcode
+
+    If the second loop is more time-consuming than the first (for
+    instance, because the second loop iterates over a non-buffered,
+    large table but the first loop over a buffered, small table) it
+    can be advantageous to loop only once over \c range2 and consider
+    the first loop as the nested loop.
+
+\code
+          loop(&range2
+           xembed(
+            loop(&range1),
+            alg(...
+          )))
+\endcode
+
+    Note that we use \c xembed rather than \c embed and that \c xembed
+    takes two arguments: the second \c loop algorithm and its
+    successor \c alg. Here is what \c xembed does:
+
+\code
+      init  ---> loop.init --->
+                 loop.step -/-> alg.init --->
+                 loop.done --->
+		 succ.init --->
+      step  -/-> loop.init --->
+                 loop.step -/-> alg.step --->
+                 loop.done --->
+		 succ.step --->
+      done  ---> loop.init --->
+                 loop.step -/-> alg.done --->
+                 loop.done --->
+		 succ.init --->
+\endcode
+
+    Obviously, it makes only sense to call \c alg.init multiple times
+    if the \c loop changes the output variables of \c alg (e.g.\
+    output fields of \c alg are attached to a table over which \c loop
+    iterates).
+
+*/
+
+void
+ExchangedEmbedding::init() 
+{
+    if (mp_iter!=NULL) mp_iter->init();
+    term_type t = UNKNOWN;
+    do
+    {
+	t = call_step(t,mp_iter);
+	if (mp_alg!=NULL) mp_alg->init();
+    }
+    while (t==Algorithm::CONTINUE);
+    if (mp_iter!=NULL) mp_iter->done();
+}
+
+Algorithm::term_type 
+ExchangedEmbedding::step() 
+{
+    if (mp_iter!=NULL) mp_iter->init();
+    term_type t = UNKNOWN;
+    do
+    {
+	t = call_step(t,mp_iter);
+	t = call_step(t,mp_alg);
+    }
+    while (t==Algorithm::CONTINUE);
+    if (mp_iter!=NULL) mp_iter->done();
+
+    return UNKNOWN;
+}
+
+void
+ExchangedEmbedding::done() 
+{
+    if (mp_iter!=NULL) mp_iter->init();
+    term_type t = UNKNOWN;
+    do
+    {
+	t = call_step(t,mp_iter);
+	if (mp_alg!=NULL) mp_alg->done();
+    }
+    while (t==Algorithm::CONTINUE);
+    if (mp_iter!=NULL) mp_iter->done();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class Tracer
+    \brief Trace a variable's value when debugging
+
+    The variable is traced twice into the logfile (before and after
+    the successor method has been called). */
+
+template <class T>
+void 
+Tracer<T>::init()
+{
+    TRACE("inspect "<<mp_var->context()->name()<<": "<<mp_var->var());
+}
+
+template <class T>
+Algorithm::term_type 
+Tracer<T>::step()
+{
+    TRACE("inspect "<<mp_var->context()->name()<<": "<<mp_var->var());
+    return UNKNOWN;
+}
+
+template <class T>
+void
+Tracer<T>::done()
+{
+    TRACE("inspect "<<mp_var->context()->name()<<": "<<mp_var->var());
+}
+
+template Tracer<int_type>;
+template Tracer<real_type>;
+template Tracer<tuple_type>;
+
+//////////////////////////////////////////////////////////////////////
+
+/** \class ElapsedTime
+    \brief Simple run-time measurement.
+
+    The algorithm measures the total time needed by the successor (and
+    its successors). mp_alg is embedded in done(). */
+
+void ElapsedTime::init()
+{
+    LOG_METHOD("DAA","ElapsedTime","init","");
+
+    mp_time->var()=0;
+
+    if (mp_alg!=NULL)
+    {
+	float t = ::actual_time();
+	mp_alg->init();
+	mp_time->var() += ::passed_time_since(t);
+    }
+}
+
+Algorithm::term_type 
+ElapsedTime::step()
+{
+    LOG_METHOD("DAA","ElapsedTime","step","");
+
+    term_type term = UNKNOWN;
+
+    if (mp_alg!=NULL)
+    {
+	float t = ::actual_time();
+	term = call_step(term,mp_alg);
+	mp_time->var() += ::passed_time_since(t);
+    }
+
+    return term;
+}
+
+void ElapsedTime::done()
+{
+    LOG_METHOD("DAA","ElapsedTime","done","");
+
+    if (mp_alg!=NULL)
+    {
+	float t = ::actual_time();
+	mp_alg->done();
+	mp_time->var() += ::passed_time_since(t);
+    }
+}
+
+////////////////////////////////////////////////////////////////////
+
+/** \class ComposeTuple
+    \brief Collect values in vector.
+
+    Compose tuple \c t from values \c v. Whenever the step method is
+    invoked, the current value of \c v is stored in the tuple \c t at
+    index \c i. If the size of the tuple \c t is too small, it will be
+    enlarged (to the smallest $2^n$ such that $2^n\ge i$ if \c dyadic
+    is \c true). */
+
+Algorithm::term_type 
+ComposeTuple::step()
+{
+    int size = mp_tuple->val().rows();
+    int index = mp_index->val();
+
+    if (index>=size)
+    {
+	mp_tuple->var().adjust( (m_dyadic)?2*max(size,1):size+10 );
+    }
+    mp_tuple->var()[ index ] = mp_value->val(); 
+    
+    return UNKNOWN;
+}
+
+void 
+ComposeTuple::done()
+{
+    int index = mp_index->val();
+
+    if (!m_dyadic) 
+	mp_tuple->var().adjust(index);
+    else 
+	for (int i=index;i<mp_tuple->val().rows();++i) 
+	    mp_tuple->var()[i]=mp_tuple->val()[index-1];
+}
+
+////////////////////////////////////////////////////////////////////
+
+/** \class DecomposeTuple
+*/
+
+Algorithm::term_type 
+DecomposeTuple::step()
+{
+    INVARIANT(mp_tuple->val().rows()>0,"cannot decompose empty tuple");
+
+    INVARIANT( mp_index->val() < mp_tuple->val().rows(),
+	       "decomposition possible");
+    mp_value->var() = mp_tuple->val()[ mp_index->val() ]; 
+    
+    return UNKNOWN;
+}
+
+//////////////////////////////////////////////////////////////////
+
+/** Modify algorithm to respect hierarchy and loop commands. */
+
+void
+iterate_algorithm(
+    Algorithm** p
+    )
+{
+    Algorithm *q=*p;
+    
+    int step=10;
+    Domain::const_iterator l;
+    do
+    {
+	
+	// gibt es eine Iteration in Stufe STEP?
+	bool exists = false;
+	for (l=gp_dm_tables->begin();l!=gp_dm_tables->end();++l)
+	{
+	    BaseTable *p_table = reinterpret_cast<BaseTable*>((*l).second);
+	    if (p_table->context()->istep()==step) exists=true;
+	}
+	
+	// Wenn ja, dann alle Ausgaben einruecken
+	if (exists)
+	{
+
+/* gewuenschter Aufbau: (/muss rueckwaerts generiert werden) :
+
+   embed_loop(fetch(&data1,mask,
+                    fetch(&data2,mask,
+                          embed_loop(indent(&data3),indent(&data4),...))));
+*/
+	    q=embed_loop(q);
+	    for (l=gp_dm_tables->begin();l!=gp_dm_tables->end();++l)
+	    {
+		BaseTable *p_table = reinterpret_cast<BaseTable*>((*l).second);
+		{
+		    if ( (p_table->context()->is_writeback()) 
+			 && (p_table->context()->is_hiertable()) )
+			((Embedding*)q)->push_front(
+			    indent((HMasterTable*)p_table));
+		}
+	    }
+
+	    // Subset-Auswahl einrichten wenn prot+data gleichzeitig
+	    // weitergelesen werden sollen:
+	    for (l=gp_dm_tables->begin();l!=gp_dm_tables->end();++l)
+	    {
+		BaseTable *p_table = reinterpret_cast<BaseTable*>((*l).second);
+		if (p_table->context()->istep()==step)
+		{
+		    if (!(p_table->context()->is_subsettable()))
+			ERROR("iteration requested, but "<<
+			      p_table->context()->name()<<
+			      " is not a SubSetTable");
+		    if (p_table->context()->is_readout()) 
+			q = fetch(p_table->context()->hmask(),
+				  (SubSetTable*)p_table,q);
+		}
+	    }
+	    
+	}
+
+
+
+	// fuer eine doppelte Schleife turn(turn(forall(
+
+	--step;
+    }
+    while (step>0);
+    
+    // modifizierten Alg. zurueckgeben
+    (*p) = embed_loop(q);
+}
+
+}; // namespace
+
+#endif
