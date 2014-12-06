@@ -1,0 +1,104 @@
+\hypertarget{strconv_8hpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/strconv.hpp File Reference}
+\label{strconv_8hpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/strconv.\+hpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/strconv.\+hpp}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{strconv_8hpp_a5f3740bc3e82bbe2d24ad2019f025851}{}void {\bfseries turn\+\_\+to\+\_\+lower} (char $\ast$)\label{strconv_8hpp_a5f3740bc3e82bbe2d24ad2019f025851}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_ab716fffdc751187d5664eb6283b6103b}{turn\+\_\+to\+\_\+lower} (S \&)
+\item 
+\hypertarget{strconv_8hpp_a168564a51d4d538b7befd477062876c0}{}void {\bfseries turn\+\_\+to\+\_\+upper} (char $\ast$)\label{strconv_8hpp_a168564a51d4d538b7befd477062876c0}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_a23695674ecb04c609a1b57462bcde2de}{turn\+\_\+to\+\_\+upper} (S \&)
+\item 
+\hypertarget{strconv_8hpp_a85cc92a7eebc2c27e6d6957d42f151f7}{}void {\bfseries convert\+\_\+to\+\_\+tex} (char const $\ast$, char $\ast$, size\+\_\+t)\label{strconv_8hpp_a85cc92a7eebc2c27e6d6957d42f151f7}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_acea9fed1f42cfeacc2089a338d6d4395}{convert\+\_\+to\+\_\+tex} (const S \&, S \&)
+\item 
+\hypertarget{strconv_8hpp_ad910a611a5b6cf39501eeb87501a2508}{}void {\bfseries convert\+\_\+to\+\_\+html} (char const $\ast$, char $\ast$const, size\+\_\+t)\label{strconv_8hpp_ad910a611a5b6cf39501eeb87501a2508}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_af02da4cbd032f260d9bf633f037a0ded}{convert\+\_\+to\+\_\+html} (const S \&, S \&)
+\item 
+\hypertarget{strconv_8hpp_a3f38b1ca7b993f25899788d5d06e0ca3}{}void {\bfseries convert\+\_\+from\+\_\+post} (char const $\ast$, char $\ast$const, size\+\_\+t)\label{strconv_8hpp_a3f38b1ca7b993f25899788d5d06e0ca3}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_a24419a33efb35c819346177ed03c2365}{convert\+\_\+from\+\_\+post} (const S \&, S \&)
+\item 
+\hypertarget{strconv_8hpp_a1ba97cacb99fd0cd54bbd19501f58777}{}void {\bfseries delete\+\_\+superfluous\+\_\+blanks} (char $\ast$)\label{strconv_8hpp_a1ba97cacb99fd0cd54bbd19501f58777}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_aa37cabb7f323eb61a309cd062ba7e0c3}{delete\+\_\+superfluous\+\_\+blanks} (S \&)
+\item 
+\hypertarget{strconv_8hpp_aaab151e00a4ab72885fbbedd9b0a2833}{}void {\bfseries convert\+\_\+to\+\_\+robust\+\_\+name} (char $\ast$)\label{strconv_8hpp_aaab151e00a4ab72885fbbedd9b0a2833}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{strconv_8hpp_aa85cef99f56ae572b29715e7ed8e9317}{convert\+\_\+to\+\_\+robust\+\_\+name} (S \&)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+String conversion routines for char$\ast$, string, and \hyperlink{class_chars}{Chars}. 
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org} 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{strconv_8hpp_a24419a33efb35c819346177ed03c2365}{}\index{strconv.\+hpp@{strconv.\+hpp}!convert\+\_\+from\+\_\+post@{convert\+\_\+from\+\_\+post}}
+\index{convert\+\_\+from\+\_\+post@{convert\+\_\+from\+\_\+post}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{convert\+\_\+from\+\_\+post}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void convert\+\_\+from\+\_\+post (
+\begin{DoxyParamCaption}
+\item[{const S \&}]{a\+\_\+post, }
+\item[{S \&}]{a\+\_\+text}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_a24419a33efb35c819346177ed03c2365}
+Convert a return string from a post command to A\+S\+C\+I\+I. \hypertarget{strconv_8hpp_af02da4cbd032f260d9bf633f037a0ded}{}\index{strconv.\+hpp@{strconv.\+hpp}!convert\+\_\+to\+\_\+html@{convert\+\_\+to\+\_\+html}}
+\index{convert\+\_\+to\+\_\+html@{convert\+\_\+to\+\_\+html}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{convert\+\_\+to\+\_\+html}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void convert\+\_\+to\+\_\+html (
+\begin{DoxyParamCaption}
+\item[{const S \&}]{a\+\_\+text, }
+\item[{S \&}]{a\+\_\+html}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_af02da4cbd032f260d9bf633f037a0ded}
+Translates characters of string into H\+T\+M\+L characters. \hypertarget{strconv_8hpp_aa85cef99f56ae572b29715e7ed8e9317}{}\index{strconv.\+hpp@{strconv.\+hpp}!convert\+\_\+to\+\_\+robust\+\_\+name@{convert\+\_\+to\+\_\+robust\+\_\+name}}
+\index{convert\+\_\+to\+\_\+robust\+\_\+name@{convert\+\_\+to\+\_\+robust\+\_\+name}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{convert\+\_\+to\+\_\+robust\+\_\+name}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void convert\+\_\+to\+\_\+robust\+\_\+name (
+\begin{DoxyParamCaption}
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_aa85cef99f56ae572b29715e7ed8e9317}
+Remove or replace characters that are not allowed in filenames. \hypertarget{strconv_8hpp_acea9fed1f42cfeacc2089a338d6d4395}{}\index{strconv.\+hpp@{strconv.\+hpp}!convert\+\_\+to\+\_\+tex@{convert\+\_\+to\+\_\+tex}}
+\index{convert\+\_\+to\+\_\+tex@{convert\+\_\+to\+\_\+tex}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{convert\+\_\+to\+\_\+tex}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void convert\+\_\+to\+\_\+tex (
+\begin{DoxyParamCaption}
+\item[{const S \&}]{a\+\_\+text, }
+\item[{S \&}]{a\+\_\+tex}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_acea9fed1f42cfeacc2089a338d6d4395}
+Translates characters of string into La\+Te\+X commands. \hypertarget{strconv_8hpp_aa37cabb7f323eb61a309cd062ba7e0c3}{}\index{strconv.\+hpp@{strconv.\+hpp}!delete\+\_\+superfluous\+\_\+blanks@{delete\+\_\+superfluous\+\_\+blanks}}
+\index{delete\+\_\+superfluous\+\_\+blanks@{delete\+\_\+superfluous\+\_\+blanks}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{delete\+\_\+superfluous\+\_\+blanks}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void delete\+\_\+superfluous\+\_\+blanks (
+\begin{DoxyParamCaption}
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_aa37cabb7f323eb61a309cd062ba7e0c3}
+Remove leading blanks etc. \hypertarget{strconv_8hpp_ab716fffdc751187d5664eb6283b6103b}{}\index{strconv.\+hpp@{strconv.\+hpp}!turn\+\_\+to\+\_\+lower@{turn\+\_\+to\+\_\+lower}}
+\index{turn\+\_\+to\+\_\+lower@{turn\+\_\+to\+\_\+lower}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{turn\+\_\+to\+\_\+lower}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void turn\+\_\+to\+\_\+lower (
+\begin{DoxyParamCaption}
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_ab716fffdc751187d5664eb6283b6103b}
+Lower-\/case conversion for {\ttfamily \hyperlink{class_chars}{Chars}} and {\ttfamily string}. \hypertarget{strconv_8hpp_a23695674ecb04c609a1b57462bcde2de}{}\index{strconv.\+hpp@{strconv.\+hpp}!turn\+\_\+to\+\_\+upper@{turn\+\_\+to\+\_\+upper}}
+\index{turn\+\_\+to\+\_\+upper@{turn\+\_\+to\+\_\+upper}!strconv.\+hpp@{strconv.\+hpp}}
+\subsubsection[{turn\+\_\+to\+\_\+upper}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void turn\+\_\+to\+\_\+upper (
+\begin{DoxyParamCaption}
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{strconv_8hpp_a23695674ecb04c609a1b57462bcde2de}
+Upper-\/case conversion for {\ttfamily \hyperlink{class_chars}{Chars}} and {\ttfamily string}. 

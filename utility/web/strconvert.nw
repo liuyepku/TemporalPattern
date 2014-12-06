@@ -1,0 +1,339 @@
+@
+
+\section{String Conversion}
+
+Here we implement some functions to convert ASCII strings into other
+formats, like \TeX\ or HTML.
+
+Some of the functions in this section can be used with standard
+[[char*]] and STL [[string]] classes. Thus, some of the functions are
+implemented using either
+
+<<StrConvert String (S)>>=
+string& text
+@
+or
+
+<<StrConvert String (C)>>=
+char* text
+@
+
+as argument.
+
+\begin{source}
+<<StrConvert Init (S)>>=
+if (text.empty()) return;
+size_t len(text.length());
+@
+<<StrConvert set length to [[i]] (S)>>=
+text.resize(i);
+@
+<<StrConvert Init (C)>>=
+if ((text==NULL) || (text[0]=='\0')) return;
+size_t len(strlen(text));
+@
+<<StrConvert set length to [[i]] (C)>>=
+text[i] = '\0';
+@
+\end{source}
+
+\topic{Conversion Functions} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The following two \function{turn\_to\_upper/lower}s lower resp.\ raise
+all characters in a string. The string length remains the same.
+
+<<StrConvert Public Functions>>=
+void turn_to_lower(<<StrConvert String>>);
+void turn_to_upper(<<StrConvert String>>);
+@
+
+\begin{source}
+<<StrConvert Implementation>>=
+void 
+turn_to_lower
+  (
+  <<StrConvert String>>
+  )
+  {
+  <<StrConvert Init>>
+
+  for (size_t i=0;i<len;++i)
+    {
+    text[i] = tolower(text[i]);
+    }
+  }
+@
+
+<<StrConvert Implementation>>=
+void 
+turn_to_upper
+  (
+  <<StrConvert String>>
+  )
+  {
+  <<StrConvert Init>>
+
+  for (size_t i=0;i<len;++i)
+    {
+    text[i] = toupper(text[i]);
+    }
+  }
+@
+\end{source}
+
+This \function{convert\_to\_tex} converts all characters (including
+german special characters) into the corresponding \TeX\ string. The
+third parameter specifies the maximum number of characters for the
+output string (2nd parameter).
+
+<<StrConvert Public Functions (C)>>=
+void convert_to_tex(char const *, char * const,size_t);
+@
+
+\begin{source}
+<<StrConvert Implementation (C)>>=
+void 
+convert_to_tex
+  (
+  char const * a_text, 
+  char * const a_tex,
+  size_t a_maxlen
+  )
+  {
+  size_t i(0),j(0);
+  a_tex[0]='\0';
+  char subst[10];
+  while (i<strlen(a_text))
+    {
+
+    switch (a_text[i])
+      {
+      case '>' : strcpy(subst,"$>$"); break;
+      case '<' : strcpy(subst,"$<$"); break;
+      case 'ä' : strcpy(subst,"\\\"a"); break;
+      case 'Ä' : strcpy(subst,"\\\"A"); break;
+      case 'ü' : strcpy(subst,"\\\"u"); break;
+      case 'Ü' : strcpy(subst,"\\\"U"); break;
+      case 'ö' : strcpy(subst,"\\\"o"); break;
+      case 'Ö' : strcpy(subst,"\\\"O"); break;
+      case 'ß' : strcpy(subst,"\\3"); break;
+      case '_' : strcpy(subst,"\\_"); break;
+      default  : subst[0]=a_text[i]; subst[1]='\0'; break;
+      }
+    j+=strlen(subst);
+    if (j>=a_maxlen) return;
+    strcat(a_tex,subst);
+    ++i;
+    }
+  }
+@
+<<StrConvert: test program>>=
+convert_to_tex("ä>ü_",buffer,2); 
+ok &= strcmp(buffer,"")==0;
+convert_to_tex("ä>ü_",buffer,buflen); 
+ok &= strcmp(buffer,"\\\"a$>$\\\"u\\_")==0;
+@
+\end{source}
+
+This \function{convert\_to\_html} converts all characters of the first
+string into corresponding HTML symbols. The third parameter specifies
+the maximum number of characters for the output string (2nd
+parameter).
+
+<<StrConvert Public Functions (C)>>=
+void convert_to_html(char const *, char * const,size_t);
+@
+
+\begin{source}
+<<StrConvert Implementation (C)>>=
+void 
+convert_to_html
+  ( 
+  const char * a_text, 
+  char * const a_html,
+  size_t a_maxlen
+  )
+  {
+  size_t i(0),j(0);
+  a_html[0]='\0';
+  char subst[10];
+  while (i<strlen(a_text))
+    {
+    switch (a_text[i])
+      {
+      case '\"' : strcpy(subst,"&quot"); break;
+      case '\n' : strcpy(subst,"<br>"); break;
+      case '<'  : strcpy(subst,"&lt;"); break;
+      case '>'  : strcpy(subst,"&gt;"); break;
+      case '&'  : strcpy(subst,"&amp;"); break;
+      case 'ä'  : strcpy(subst,"&auml;"); break;
+      case 'Ä'  : strcpy(subst,"&Auml;"); break;
+      case 'ü'  : strcpy(subst,"&uuml;"); break;
+      case 'Ü'  : strcpy(subst,"&Uuml;"); break;
+      case 'ö'  : strcpy(subst,"&ouml;"); break;
+      case 'Ö'  : strcpy(subst,"&Ouml;"); break;
+      case 'ß'  : strcpy(subst,"&szlig;"); break;
+      default   : subst[0]=a_text[i]; subst[1]='\0'; break;
+      }
+    j+=strlen(subst);
+    if (j>=a_maxlen) return;
+    strcat(a_html,subst);
+    ++i;
+    }
+  }
+@
+<<StrConvert: test program>>=
+convert_to_html("äxü>",buffer,8); 
+ok &= strcmp(buffer,"&auml;x")==0;
+convert_to_html("äxü>",buffer,buflen); 
+ok &= strcmp(buffer,"&auml;x&uuml;&gt;")==0;
+@
+\end{source}
+
+This \function{convert\_from\_post} converts all characters of the
+first string, which has been obtained from a HTML post command, into
+corresponding ASCII symbols. The third parameter specifies the maximum
+number of characters for the output string (2nd parameter).
+
+<<StrConvert Public Functions (C)>>=
+void convert_from_post(char const *, char * const,size_t);
+@
+
+\begin{source}
+<<StrConvert Implementation (C)>>=
+void 
+convert_from_post
+  (
+  char * const a_post,
+  char * a_text,
+  size_t a_maxlen
+  )
+  {
+  size_t i(0),j(0),k;
+  char c;
+  a_text[0]='\0';
+  while (i<strlen(a_post))
+    {
+    if (j==a_maxlen) return; // a_text cannot take one more char
+    switch (a_post[i])
+      {
+      case '+' : a_text[j]=' '; ++j; break;
+      case '%' : // hex number to ascii
+                 k=0;
+                 ++i; c=a_post[i];
+                 if (c>='A' && c<='F') k += 16*(10+c-'A'); else
+                 if (c>='a' && c<='f') k += 16*(10+c-'a'); else
+                 if (c>='0' && c<='9') k += 16*(c-'0');
+                 ++i; c=a_post[i];
+                 if (c>='A' && c<='F') k += (10+c-'A'); else
+                 if (c>='a' && c<='f') k += (10+c-'a'); else
+                 if (c>='0' && c<='9') k += (c-'0');
+                 a_text[j]=((char)k);
+                 ++j;
+                 break;
+      default  : a_text[j]=a_post[i]; ++j; break;
+      }
+    ++i;
+    }
+  a_text[j]='\0';
+  }
+@
+\end{source}
+
+The next \function{delete\_superfluous\_blanks} takes a string a
+deletes leading blanks, shrinks series of blanks into a single blank,
+and deletes all blanks after the last non-blank character.
+
+<<StrConvert Public Functions>>=
+void delete_superfluous_blanks(<<StrConvert String>>);
+@
+
+\begin{source}
+<<StrConvert Implementation>>=
+void 
+delete_superfluous_blanks
+  (
+  <<StrConvert String>>
+  )
+  {
+  <<StrConvert Init>>
+
+  size_t i(0),j(0);
+  bool blank(false);
+  for (j=0;j<len;j++)
+    {
+    if (!isspace(text[j]))
+      { 
+      if ((i>0) && (blank)) { text[i] = ' '; ++i; }
+      text[i] = text[j]; ++i; 
+      }
+    blank = itob(isspace(text[j]));
+    }
+
+  <<StrConvert set length to [[i]]>>
+  }
+@
+<<StrConvert: test program>>=
+strcpy(buffer,"   this   is  \n   a     book  ");
+delete_superfluous_blanks(buffer);
+ok &= strcmp(buffer,"this is a book")==0;
+@
+\end{source}
+
+The following \function{convert\_to\_robust\_name} replaces all
+characters that are not allowed within filenames or C/C++ function
+names by similar characters. The string length remains the same.
+
+<<StrConvert Public Functions>>=
+void convert_to_robust_name(<<StrConvert String>>);
+@
+
+\begin{source}
+<<StrConvert Implementation>>=
+void 
+convert_to_robust_name
+  (
+  <<StrConvert String>>
+  )
+  {
+  <<StrConvert Init>>
+
+  for (size_t i=0;i<len;++i)
+    {
+    switch (text[i])
+      {
+      case ' ' :
+      case '-' : text[i]='_'; break;
+      }
+    }
+  }
+@
+\end{source}
+
+\begin{source}
+\subsection*{Administrata} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<StrConvert Usage>>=
+strconvert [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<StrConvert Header Includes>>=
+#include <iostream.h>
+#include <ctype.h> // isspace, tolower, toupper
+#include "<<DefBool Definition>>.hpp" // bool
+#include "<<Constants Definition>>.hpp" // char_cc
+@
+<<StrConvert Header Includes (S)>>=
+#include <string> // stl string
+@
+<<StrConvert Header Includes (C)>>=
+#include <string.h> // strlen
+@
+<<StrConvert History>>=
+@
+<<UtilTest: test program>>=
+{ // string conversion
+const int buflen(1024);
+char buffer[buflen];
+<<StrConvert: test program>>
+}
+@
+\end{source}

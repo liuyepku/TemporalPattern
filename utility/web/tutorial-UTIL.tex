@@ -1,0 +1,166 @@
+
+%%%
+%%% Util Source Documentation
+%%% Frank Hoeppner, DLR, Braunschweig, 1997-99
+%%%
+
+\documentclass{book}
+
+%% source listing specific
+\newif\ifsourcecode
+%\sourcecodetrue
+\sourcecodefalse
+\newif\ifhackerdocs
+%\hackerdocstrue
+\hackerdocsfalse
+\newif\ifdeveloper
+%\developertrue
+\developerfalse
+
+%\usepackage{citesort}
+%\usepackage{refman}
+\usepackage{subfigure}
+\usepackage{a4dutch}
+%\descriptionleftfalse
+%\descriptioncolonfalse
+\input{tutorial}
+
+\parskip=0.4\baselineskip \advance\parskip by 0pt plus 2pt
+\parindent=0pt
+
+\begin{document}
+\bibliographystyle{abbrv}
+%\sloppy
+
+%%% 
+%%% Title
+%%%
+
+\thispagestyle{empty}
+\pagenumbering{roman}
+
+\title{Basic Utility Functions\\[-3mm]
+\rule{12cm}{1mm}\\ 
+{\normalsize\sc \ifhackerdocs developer's \else user's \fi manual}}
+\author{Frank H\"oppner}
+
+\maketitle
+
+%%%
+%%% Dedication
+%%%
+
+\newpage This document is part of the {\tt utility} package. Maintainer of
+this package is Frank H\"oppner. The C++-sources and this documentation have
+been written using the {\sl literate programming} tool noweb
+\cite{Ramsey:TS:94, Ramsey:WWW:noweb}. Please mail bug reports, suggestions,
+comments and any other feedback to alias \url{frank.hoeppner@ieee.org}. The
+package has been developed under Linux with the egcs-2.91.66
+compiler.\index{compiler}
+
+You can obtain this package from \url{http://www.fuzzy-clustering.de}.
+
+{\tt utility} package Copyright \copyright\ 1997-2000 Frank H\"oppner
+
+The programs in this package are free software; you can redistribute and/or
+modify them under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+These programs are distributed in the hope that they will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place, Suite 330, Boston, MA 02111-1307 USA
+
+%%%
+%%% Contents
+%%%
+
+\tableofcontents
+\newpage
+
+%%%%
+%%%% Hauptteil
+%%%%
+
+%%%
+%%% Introduction
+%%%
+
+\cleardoublepage
+%\pagestyle{noweb}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+The {\tt utility} package covers frequently used constant definitions, simple
+time measurement, stream analysis (chapter \ref{util:cha}), and several
+functions that are useful in combination with the STL (standard template
+library \cite{Josuttis:AW:1996}, chapter \ref{stl:cha}).
+
+%\input{litprog}
+%\input{compiler}
+
+\input{utiltest}
+
+%%%
+%%% Utilities
+%%%
+
+\chapter{Utility Functions}
+\label{util:cha}
+
+This chapter treats constant definitions, floating point time functions, a
+very simple character class, and functions for input stream analysis and
+string conversion.
+
+\input{constants}
+\include{time}
+\include{chars}
+\include{utilstream}
+\include{strconvert}
+
+%%%
+%%% STL Utilities
+%%%
+
+\chapter{STL Related Utilities}
+\label{stl:cha}
+
+The source code provided in this chapter deals with STL support. Some compiler
+have their own \verb+bool+ type definition, others not. The STL comes along
+with its own \verb+bool+ type definition. The file in section \ref{defbool:sec}
+tries to find out whether you still have do define your bool or not. If you use
+STL data types like \verb+map+ or \verb+set+, you can find some helpful
+less-functors in section \ref{stlutil:sec}. Finally, we provide (default) i/o
+functions for all STL data types in section \ref{stlstream:sec}.
+
+\input{defbool}
+\include{stlutil}
+\include{stlstream}
+
+%%%
+%%% References
+%%%
+
+\newpage
+\bibliography{abr,abc,def,ghi,jkl,mno,pqr,stu,vwxyz}
+%prg,sourcedoc,dlr-ib}
+\addcontentsline{toc}{chapter}{References}
+
+%%%
+%%% Index
+%%%
+
+\newpage
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+  
+\end{document}
+

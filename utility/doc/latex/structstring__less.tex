@@ -1,0 +1,31 @@
+\hypertarget{structstring__less}{}\section{string\+\_\+less Struct Reference}
+\label{structstring__less}\index{string\+\_\+less@{string\+\_\+less}}
+
+
+Inherits binary\+\_\+function$<$ char\+\_\+cc, char\+\_\+cc, bool $>$.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{structstring__less_a53582c94a6224a3452ddbaf78829523e}{operator()} (char\+\_\+cc, char\+\_\+cc) const 
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Binary function to compare char$\ast$ pointer via strcmp. 
+
+\subsection{Member Function Documentation}
+\hypertarget{structstring__less_a53582c94a6224a3452ddbaf78829523e}{}\index{string\+\_\+less@{string\+\_\+less}!operator()@{operator()}}
+\index{operator()@{operator()}!string\+\_\+less@{string\+\_\+less}}
+\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}bool string\+\_\+less\+::operator() (
+\begin{DoxyParamCaption}
+\item[{char\+\_\+cc}]{x, }
+\item[{char\+\_\+cc}]{y}
+\end{DoxyParamCaption}
+) const}\label{structstring__less_a53582c94a6224a3452ddbaf78829523e}
+The comparison yields {\ttfamily true}, if the first comes lexicographically before the second ({\ttfamily strcmp} returns {\ttfamily -\/1} ). The function handles the special pointers {\ttfamily N\+U\+L\+L} and {\ttfamily 0x\+F\+F\+F\+F} = {\ttfamily $\sim$0} as top and bottom elements, that is\+: a {\ttfamily N\+U\+L\+L} string comes before any other string, a {\ttfamily $\sim$0} string after any other string. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/\hyperlink{stlutil_8hpp}{stlutil.\+hpp}\item 
+/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/stlutil.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,337 @@
+@
+
+\section{Constants and Type Definitions}
+\label{constants:sec}
+
+This section contains several type and constant definitions. Most of
+the (numerical) constants are given by means of the preprocessor
+directive [[#define]] instead of a [[const float]] declaration,
+because this might cause problems when initializing constants using
+function calls in shared libraries\footnote{For instance, {\tt const
+float SQRT2 ( sqrt(2.0) );} may cause problems when defined in a
+shared library because it is not clear whether and when the
+initialization is executed. It may happen that other code sections
+address {\tt SQRT2} before it is initialized.}. Furthermore, most
+compiler evaluate a product of several [[const float]] at run-time,
+whereas a product of [[define]]d constants is evaluated at
+compile-time.
+
+
+\begin{source}
+<<Constants Usage>>=
+constants [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<Constants Header Includes>>=
+#include <limits.h>
+#include <float.h> // defines FLT_MAX
+#include <math.h>
+#include "<<DefBool Definition>>.hpp"
+@
+\end{source}
+
+\topic{Types} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We use [[TData]] for numerical calculations, [[TRange]] for distance values,
+[[TCost]] for cost values, [[TLambda]] for values in the unit intervall
+$[0,1]$, and [[word]] for [[unsigned int]].
+
+<<Constants Global>>=
+typedef double TData;
+typedef float TCost;
+typedef float TRange;
+typedef float TLambda;
+typedef unsigned int word;
+@
+
+To make the use of [[[const] char [const] * [const]]] more intuitive, we
+introduce typedefs for {\sl constant pointer [[cp]]}, {\sl constant characters
+[[cc]]}, and both {\sl constant pointer and characters [[cpc]]}:
+
+<<Constants Global>>=
+typedef char * const char_cp;
+typedef char const * char_cc; // const char * == char const *
+typedef const char * const char_cpc;
+@
+
+\begin{comment} % obsolete
+
+\topic{Macros} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this section we define some thresholds for frequently used checks. Some of
+these macros can be considered as obsolete, they should be replaced by the
+type-sensitive primitive operations \cite{Hoeppner:SD:MATH}.
+
+<<Constants Public Data>>=
+#define POS_IMPOSSIBLE 1.0E20
+#define NEG_IMPOSSIBLE -1.0E20
+#define EPSILON 0.0001
+@
+
+<<Constants Public Functions>>=
+#define SQR(a)      ((a)*(a))
+#define ZERO(a)     (fabs(a)<EPSILON)
+#define NOTZERO(a)  (fabs(a)>=EPSILON)
+#define POSITIVE(a) ((a) >  EPSILON)
+#define NEGATIVE(a) ((a) < -EPSILON)
+#define EQUAL ==
+#define NOT(expr) (!(expr))
+@
+\end{comment}
+
+\topic{Scaling Factors} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Here are some very basic scaling factors.
+
+<<Constants Public Data>>=
+#define HALF (0.5)
+#define ONE  (1.0)
+#define TWO  (2.0)
+#define DEKA (10.0)
+#define HEKTO (100.0)
+#define KILO (1000.0)
+#define KILOBYTE (1024)
+#define MEGA (1.0E6)
+#define MEGABYTE (1048576)
+#define GIGA (1.0E9)
+#define TERA (1.0E12)
+
+#define DEZI (0.1)
+#define CENTI (0.01)
+#define MILLI (0.001)
+#define MICRO (1.0E-6)
+#define NANO (1.0E-9)
+#define PIKO (1.0E-12)
+#define FEMTO (1.0E-15)
+@
+
+We define the following constants (in order): square root of $2$
+($\sqrt{2}$), $3$, and $5$, length of a nautical mile (in metre) (Gieck, A5), length
+of one feet  (in metre) (Gieck, A4), gravitational acceleration
+[$\frac{m}{s^2}$], universal gas constant for air [$\frac{m^2}{K s^2}$],
+isentropic expansion air (BADA (3.2-17))
+
+<<Constants Global>>=
+#define SQRT2 (1.414213562373)
+#define SQRT3 (1.7320508076)
+#define SQRT5 (2.2360679775)
+#define ONE_NAUTICAL_MILE (1852.0)
+#define ONE_FEET (0.3048)
+#define GRAVITATIONAL_ACCELERATION (9.8066)
+#define UNIVERSAL_GAS_CONSTANT_AIR (287.04)
+#define ISENTROPIC_EXPANSION_AIR (1.4)
+@
+
+\verb+log+ returns the natural logarithm, \verb+log10+ the logarithm
+to base 10, and here is a macro for base 2:
+
+<<Constants Global>>=
+#define LD(x) (log(x)*1.442695)
+@
+
+We define some scale-conversion factors (in order): minutes per hour, seconds
+per minute, feet to metre, metre to feet, knots to metre per second, metre per
+second to knots
+
+<<Constants Public Data>>=
+#define MIN_PER_HOUR (60)
+#define SEC_PER_MIN (60)
+#define FEET_TO_METRE (ONE_FEET)
+#define METRE_TO_FEET (1.0/FEET_TO_METRE)
+#define KTS_TO_MPS (ONE_NAUTICAL_MILE/(SEC_PER_MIN*MIN_PER_HOUR)) 
+#define MPS_TO_KTS (1.0/KTS_TO_MPS) 
+#define NM_TO_M (ONE_NAUTICAL_MILE)
+#define M_TO_NM (1.0/ONE_NAUTICAL_MILE)
+@
+
+\topic{Unit Intervall} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Constants for the unit intervall $[0,1]$ (in order): minimum value, maximum
+value, impossible high lambda value, impossible small lambda value.
+
+<<Constants Public Data>>=
+#define MIN_LAMBDA ((TLambda)0.0)
+#define MAX_LAMBDA ((TLambda)1.0)
+#define POS_IMPOSSIBLE_LAMBDA ((TLambda)2.0)
+#define NEG_IMPOSSIBLE_LAMBDA ((TLambda)-2.0)
+#define NO_CONFLICT_LAMBDA POS_IMPOSSIBLE_LAMBDA
+#define CONFLICT_LAMBDA ((TLambda)0.0)
+@
+
+\begin{comment} % obsolete
+
+\topic{Cost Values} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Cost values (in order): no costs, (impossible) high costs,
+(impossible) low costs
+
+<<Constants Public Data>>=
+#define ZERO_COST (0.0)
+#define POS_IMPOSSIBLE_COST (1.0E20)
+#define NEG_IMPOSSIBLE_COST (-1.0E20)
+@
+
+\topic{Range/Distance Values} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Range/distance values (in order): zero distance, $\varepsilon$-distance
+(distance that might be considered as zero distance; be aware that the
+appropriateness of this constant is application dependent), (impossible) high
+distance, (impossible) low distance
+
+<<Constants Public Data>>=
+#define ZERO_RANGE (0.0)
+#define EPSILON_RANGE (0.001)
+#define POS_IMPOSSIBLE_RANGE (1.0E20)
+#define NEG_IMPOSSIBLE_RANGE (-1.0E20)
+@
+\end{comment}
+
+\topic{Bit Operation Macros} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Bit operation macros (in order): check whether a bit is set, check
+whether a bit is not set, set a bit, clear a bit. Instead of a
+single bit multiple bits can be used via [[bit1 | bit2]].
+(bit count from 0)
+
+<<Constants Public Functions>>=
+#define SET_BIT(i) (1<<i)
+#define IS_MASKED(status,mask,tag) ( ((status) & (mask)) == tag )
+#define IS_TAG(status,tag) ( ((status) & (tag)) != 0 )
+#define IS_NO_TAG(status,tag) ( ((status) & (tag)) == 0 )
+#define SET_TAG(status,tag) (status) = (status)|(tag)
+#define CLEAR_TAG(status,tag) (status) &= (~(tag))
+@
+
+\begin{comment} 
+
+\topic{Character and String Constants} %%%%%%%%%%%%%%%%%%%%%
+
+<<Constants Public Data>>=
+#define BEEP_CHAR char(7)
+#define ESCAPE_ASCII 27
+#define BLANK_ASCII 32
+#define PLUS_ASCII 43
+#define COLON_ASCII 44
+#define MINUS_ASCII 45
+#define POINT_ASCII 46
+#define LOWER_A_ASCII 97
+#define LOWER_B_ASCII 98
+#define LOWER_C_ASCII 99
+#define LOWER_D_ASCII 100
+#define LOWER_E_ASCII 101
+#define LOWER_F_ASCII 102
+#define LOWER_G_ASCII 103
+#define LOWER_H_ASCII 104
+#define LOWER_I_ASCII 105
+#define LOWER_J_ASCII 106
+#define LOWER_K_ASCII 107
+#define LOWER_L_ASCII 108
+#define LOWER_M_ASCII 109
+#define LOWER_N_ASCII 110
+#define LOWER_O_ASCII 111
+#define LOWER_P_ASCII 112
+#define LOWER_Q_ASCII 113
+#define LOWER_R_ASCII 114
+#define LOWER_S_ASCII 115
+#define LOWER_T_ASCII 116
+#define LOWER_U_ASCII 117
+#define LOWER_V_ASCII 118
+#define LOWER_W_ASCII 119
+#define LOWER_X_ASCII 120
+#define LOWER_Y_ASCII 121
+#define LOWER_Z_ASCII 122
+@
+\end{comment}
+
+\topic{Data Type Constants} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The following minimum/maximum template definitions have to be replaced
+by a similar STL class (which seems unavailable until now.)
+
+<<Constants Public Data>>=
+template <class DATA>
+struct Constants
+  {
+  inline DATA max() const;
+  inline DATA min() const;
+  };
+@
+
+The min/max functions are specified for the types [[int]], [[float]]
+and [[double]].
+
+\begin{source}
+<<Constants Public Functions>>=
+TEMPLATE_SPECIALIZATION inline int 
+Constants<int>::max() const { return INT_MAX; }
+TEMPLATE_SPECIALIZATION inline int 
+Constants<int>::min() const { return INT_MIN; }
+
+TEMPLATE_SPECIALIZATION inline float 
+Constants<float>::max() const { return 1E30; }
+TEMPLATE_SPECIALIZATION inline float 
+Constants<float>::min() const { return -1E30; }
+
+TEMPLATE_SPECIALIZATION inline double 
+Constants<double>::max() const { return 1E30; }
+TEMPLATE_SPECIALIZATION inline double 
+Constants<double>::min() const { return -1E30; }
+@
+\end{source}
+
+\begin{comment}
+\topic{Obsolete} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Search node constants (for use in a planning environment):
+
+<<Constants Public Data>>=
+#define STATE_ClosedNode (1)
+#define STATE_ExpandedNode (2)
+#define STATE_Duplicate (4)
+#define STATE_Upgraded (8)
+#define STATE_Downgraded (16)
+#define ACTION_SuccToBeDeleted (32)
+#define ACTION_ToBeDeleted (64)
+#define ACTION_ToBeExpanded (128)
+#define ACTION_ToBeOpened (256)
+#define ACTION_ToBeClosed (512)
+
+#define MAX_LEN_TAG_STRING 15
+#define MAX_LEN_NAME_STRING 31
+//#define MAX_LEN_BUFFER_STRING 127
+
+#define REDRAW_STARTFINAL ((int)1)
+#define REDRAW_CONSTRAINTS ((int)2)
+#define REDRAW_STATE ((int)4)
+#define REDRAW_SELECTION ((int)8)
+#define REDRAW_TIME_DEPENDENT ((int)16)
+
+extern const float COLOR_ID_CONFLICTOUS[];
+extern const float COLOR_ID_UNVALIDATED[];
+extern const float COLOR_ID_NOCONFLICTYET[];
+extern const float COLOR_ID_FINALCONFIG[];
+extern const float COLOR_ID_STARTCONFIG[];
+extern const float COLOR_ID_SELECTED[];
+extern const float COLOR_ID_CONSTRAINT[];
+extern const float COLOR_ID_MOVING[];
+@
+
+
+removed, deletion is next step: 990207 fh:
+no deleteion !! still in use!
+
+\topic{Data} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The following color codes consist of red, blue, green, and alpha
+portion.
+
+<<Constants Instantiation>>=
+const float COLOR_ID_CONFLICTOUS[4]   = { 0.3f,0.0f,0.0f,1.0f };
+const float COLOR_ID_UNVALIDATED[4]   = { 0.3f,0.3f,0.3f,1.0f };
+const float COLOR_ID_NOCONFLICTYET[4] = { 0.7f,0.7f,0.7f,1.0f };
+const float COLOR_ID_FINALCONFIG[4]   = { 0.0f,0.0f,1.0f,1.0 };
+const float COLOR_ID_STARTCONFIG[4]   = { 0.0f,1.0f,0.0f,1.0f };
+const float COLOR_ID_SELECTED[4]      = { 1.0f,1.0f,0.0f,1.0f };
+const float COLOR_ID_CONSTRAINT[4]    = { 0.7f,0.0f,0.0f,1.0f };
+const float COLOR_ID_MOVING[4]        = { 1.0f,0.0f,0.0f,1.0f };
+@
+\end{comment}

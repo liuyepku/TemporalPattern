@@ -1,0 +1,139 @@
+2002-01-14  Frank Hoeppner  <hoeppner@de>
+
+	* ustream.cpp: yet another bug in is_followed_by(is,..)
+
+2001-12-11  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* define.hpp: turned some of the macros into inline templates
+
+2001-12-11  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* ustream.cpp: is_followed_by: bugfix: function did not work
+	correctly with capital_letters=true; bugfix: added special
+	treatment for the case of prefixes in the array of keywords. 
+
+2001-12-07  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* ttime.cpp: macros TTIME_USE_TIMEB and TTIME_USE_TIMEVAL
+	introduced, automatically determined by configure script. If you
+	do not want to use ./configure, define the appropriate macro
+	manually. Borland and MS (Windows) are still detected by means of
+	__BORLANDC__ and _MSC_VER.
+
+2001-12-06  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* ustream-s.cpp, ustream-s.hpp, ustream-d.cpp, ustream-d.hpp:
+	removed (see ustream.?pp)
+
+	* strconv.cpp, strconv.hpp: all functions are now available for
+	string, Chars and char*
+
+	* strconv-s.cpp, strconv-s.hpp: removed (see strconv.?pp)
+
+	* Chars.hpp: renamed some functions to the equivalent names in the
+	string class. Introduced new NoChars class.
+
+2001-02-21  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de> (1.1.7)
+
+	* utilstream: added is_followed_by(is,char) 
+
+2001-01-17  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* changed min/max constants for float/double in
+	constants/define. The values didn't work, although defined in
+	official files. Now using +/-1E30.
+
+2000-09-01  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* defbool.cpp: string/bool conversion in defbool 
+
+2000-06-22  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* introduced bool3 type for handling three-valued logic (true,
+	false, unknown)
+
+2000-06-05  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de> (1.1.6)
+
+	* noweb sources are included in distribution
+
+2000-05-11  Hartmut Helmke  <hartmut.helmke@dlr.de> (1.1.5)
+
+	* defbool.cpp: inserted missing <string.h> inclusion
+
+2000-05-06  Frank Hoeppner  <frank@amdk6.home.net>
+
+	* ustream.cpp, ustream.hpp: new function get_keyword,
+	is_followed_by has new optional parameter for default return value
+
+2000-04-12  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de> (1.1.4)
+
+	* encapsulated instantiation of string<char> by
+	NO_EXPLICIT_TEMPLATE_INSTANTIATION
+
+	* renamed library from libutil to libutility (due to name conflict
+	with another library)
+
+2000-03-20  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de> (1.1.3)
+
+	* added template class string<char> instantiation
+
+2000-03-06  Albert Akhriev
+
+	* stlstream.hpp: fixed missing return type with stl_container_output
+
+2000-03-06  Hartmut Helmke  <hartmut.helmke@dlr.de>
+
+	* ustream.cpp: problems with MS VC++, removed const modifier
+	within struct keyword_entry
+
+2000-02-28  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* ustream.cpp: is_followed_by(...): now several keywords are
+	matched simultaneously which speeds up simple parsing
+
+2000-02-21  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* utilstream and strconvert have been extended to work with stl
+	strings. Both files are `instantiated' in two resp. three
+	specializations: chars (using char*), strings (using stl strings),
+	drop (no storage)
+
+2000-02-10  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* configure script finds out whether the compiler understands the
+	template specialization sequence "template <>". Use macro
+	TEMPLATE_SPECIALIZATION (config.h) instead of "template <>".
+
+2000-02-10  Hartmut Helmke  <hartmut.helmke@dlr.de>
+
+	* removed some obsolete #define's; introduced itob in defbool due
+	to problems with MSC
+
+2000-02-10  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* configure script detects STL; finds out whether bool is defined
+	in bool.h or stl_config.h
+
+2000-01-20  Frank Hoeppner  <hoeppner@et-inf.fho-emden.de>
+
+	* bug fix: Logs with ALWAYS_ID or NEVER_ID caused crashs because
+	the corresponding NULL and ~NULL pointers cannot be written into
+	the output stream.
+
+	* bug fix: truncated output did not work, now new stream is
+	allocated with an increased buffer size (new InitialLog parameter
+	specifies the buffer increment at re-allocation).
+
+1999-11-11  Hartmut Helmke <hartmut.helmke@dlr.de>
+
+	* renamed DEBUG to LOGTRACE_DEBUG
+
+1999-09-16  Hartmut Helmke <hartmut.helmke@dlr.de>
+
+	* using constants INT/FLT/DBL_MIN/MAX instead of MAXINT and
+	including limits.h and float.h instead of values.h
+	
+1999-02-13  Frank Hoeppner  <frank.hoeppner@dlr.de>
+
+	* first GNU style package version
+

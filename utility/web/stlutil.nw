@@ -1,0 +1,231 @@
+@
+
+\section{STL Utility Functors}
+\label{stlutil:sec} \index{comparison} \index{functors}
+
+We present a couple of functors which are helpful when using the standard
+template library (STL). To use a STL [[set<T,...>]] or [[map<T,...>]] data
+structure, one must provide a [[binary_function<T,T,bool>]] to compare the
+[[set]] (resp.\ [[map]]) contents. We define some of those binary functions for
+frequently used types [[T]]. Furthermore, we present some composition functors
+to compose binary functions.
+
+\subsection{Virtual Functions} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In some cases, one wants to use a [[unary_function]] as a virtual
+function, and it seems to be convenient to adapt the notation of the
+STL.
+
+<<STLUtil Public Functions>>=
+template <class Arg, class Result>
+struct virtual_unary_function 
+  : public unary_function<Arg,Result>
+  {
+  public:
+    virtual Result operator()(Arg) = 0;
+  };
+
+template <class Arg1, class Arg2, class Result>
+struct virtual_binary_function 
+  : public binary_function<Arg1,Arg2,Result>
+  {
+  public:
+    virtual Result operator()(Arg1,Arg2) = 0;
+  };      
+@
+
+\subsection{Comparison} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The binary \function{string\_less} [[string_less]] compares [[char*]] pointer
+via [[strcmp]].
+
+\begin{source}
+<<STLUtil Public Functions>>=
+
+struct string_less
+  : public binary_function<char_cc,char_cc,bool>
+  {
+  bool operator() (char_cc,char_cc) const;
+  };
+@
+\end{source}
+
+The comparison yields [[true]], if the first comes lexicographically before the
+second ([[strcmp]] returns [[-1]]). The function handles the special pointers
+[[NULL]] and [[0xFFFF = ~0]] as top and bottom elements, that is: a [[NULL]]
+string comes before any other string, a [[~0]] string after any other string. 
+
+\begin{source}
+<<STLUtil Implementation>>=
+
+bool 
+string_less::operator() 
+  (
+  char_cc x,
+  char_cc y
+  ) 
+  const
+  {
+  // 0 is less than any other pointer but 0
+  if (x==0)
+    {
+    return (y!=0);
+    }
+  else if (y==0)
+    {
+    return false;
+    }
+  // ~0 is greater (!less) than any other pointer but ~0
+  else if (x==(char*) ~0)
+    {
+    return false;
+    }
+  else if (y==(char*) ~0)
+    {
+    return (x!=(char*) ~0);
+    }
+  else 
+    {
+    return (strcmp(x,y)<0);
+    }
+  }
+@
+\end{source}
+
+The binary \function{less\_dereference} template [[less_dereference]]  compares
+pointer to classes via dereferencing them and calling [[operator<]]. This
+functor is extremly useful for storing pointer [[T*]] to a complex classes
+[[T]] in a [[set< T*, less_dereference<T*> >]], using the order provided by
+[[T::operator<]].
+
+\begin{source}
+<<STLUtil Public Functions>>=
+
+template <class POINTER>
+struct less_dereference 
+  : public binary_function<const POINTER, const POINTER, bool>
+  {
+  bool operator() (const POINTER ap_x, const POINTER ap_y) const
+    { return (*ap_x) < (*ap_y); }
+  };
+@
+\end{source}
+
+The binary \function{less\_cost\_dereference} template
+[[less_cost_dereference]] compares pointer to classes via dereferencing them
+and calling the class methods [[get_cost]]. The binary
+\function{less\_name\_dereference} [[less_name_dereference]] behaves in the
+same way, and also the \function{less\_number\_dereference}
+[[less_number_derefernce]].
+
+\begin{source}
+<<STLUtil Public Functions>>=
+
+template <class POINTER>
+struct less_cost_dereference 
+  : public binary_function<const POINTER, const POINTER, bool>
+  {
+  bool operator() ( const POINTER ap_x, const POINTER ap_y ) const
+    { return ap_x->get_cost() < ap_y->get_cost(); }
+  };
+@
+
+<<STLUtil Public Functions>>=
+
+template <class POINTER>
+struct less_name_dereference 
+  : public binary_function<const POINTER, const POINTER, bool>
+  {
+  bool operator() ( const POINTER ap_x, const POINTER ap_y ) const
+    { return strcmp(ap_x->get_name(),ap_y->get_name())<0; }
+  };
+@
+
+<<STLUtil Public Functions>>=
+
+template <class POINTER>
+struct less_number_dereference 
+  : public binary_function<const POINTER, const POINTER, bool>
+  {
+  bool operator() ( const POINTER ap_x, const POINTER ap_y ) const
+    { return ap_x->get_number() < ap_y->get_number(); }
+  };
+@
+\end{source}
+
+\subsection{Composition} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We provide two \function{composition}s [[compose]] for unary and
+binary functions, yielding the following compositions:
+[[compose(u1,u2)]] yields an unary function $u$ with $u(x)=u1(u2(x))$;
+[[compose(u1,u2,u3)]] yields a binary function $u$ with
+$u(x,y)=u1(u2(x),u3(y))$.
+
+\begin{source}
+<<STLUtil Inline Implementation>>=
+
+template <class Operation1, class Operation2, class Operation3>
+class mixed_compose 
+  : public binary_function
+      <
+      typename Operation2::argument_type,
+      typename Operation3::argument_type,
+      typename Operation1::result_type
+      >
+  {
+  public:
+    mixed_compose(const Operation1& x, const Operation2& y, const Operation3& z) 
+      : op1(x), op2(y), op3(z) {}
+    result_type operator() (const first_argument_type& x, const second_argument_type& y) const
+      { return op1( op2(x), op3(y) ); }
+  protected:
+    Operation1 op1;
+    Operation2 op2;
+    Operation3 op3;
+  };
+@
+
+<<STLUtil Inline Implementation>>=
+
+template <class Operation1, class Operation2>
+unary_compose<Operation1,Operation2> 
+compose(const Operation1& op1,const Operation2& op2)
+  { return unary_compose<Operation1,Operation2>(op1,op2); }
+
+template <class Operation1, class Operation2, class Operation3>
+mixed_compose<Operation1,Operation2,Operation3> 
+compose(const Operation1& op1,const Operation2& op2,const Operation3& op3)
+  { return mixed_compose<Operation1,Operation2,Operation3>(op1,op2,op3); }
+@
+\end{source}
+
+\subsection{STL Container Deletion} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+If a STL container stores pointer to classes, they have to be deleted at the
+end. This can be done very easily through the [[Deleter]] \class{deleter}
+[[for_each(C.begin(),C.end(),Deleter<T>());]], if [[C]] is a container storing
+data of type [[T*]].
+
+\begin{source}
+<<STLUtil Inline Implementation>>=
+template <class T> 
+struct Deleter
+  { 
+  inline void operator() (T* p) { delete p; } 
+  };
+@
+\end{source}
+
+\begin{source}
+\subsection*{Administrata} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<STLUtil Usage>>=
+stlutil [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<STLUtil Header Includes>>=
+#include <string.h> // strcmp
+#include <functional> // binary_function
+#include "<<Constants Definition>>.hpp"
+@
+<<STLUtil History>>=
+@
+\end{source}

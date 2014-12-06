@@ -1,0 +1,20 @@
+
+NEWS file
+---------
+
+For minor changes, see ChangeLog file.
+
+v 1.1.4
+
+- renamed libutil to libutility to avoid name conflict
+
+v 1.1.0 (beta)
+
+- improved configure script
+- STL string support with string conversion and stream utilities
+
+v 1.0.0
+
+- first release as util package
+
+

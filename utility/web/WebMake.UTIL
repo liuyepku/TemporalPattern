@@ -1,0 +1,79 @@
+automatically generated model file; do not edit.
+<<Chars>>=
+Chars
+@
+<<Chars Definition>>=
+Chars
+@
+<<Constants>>=
+Define
+@
+<<Constants Definition>>=
+define
+@
+<<DefBool>>=
+defbool
+@
+<<DefBool Definition>>=
+defbool
+@
+<<STLStream>>=
+stlstream
+@
+<<STLStream Definition>>=
+stlstream
+@
+<<STLUtil>>=
+stlutil
+@
+<<STLUtil Definition>>=
+stlutil
+@
+<<StrConvertChar>>=
+strconvertchar
+@
+<<StrConvertChar Definition>>=
+strconv
+@
+<<StrConvertString>>=
+strconvertstring
+@
+<<StrConvertString Definition>>=
+strconv-s
+@
+<<TVL>>=
+bool3
+@
+<<TVL Definition>>=
+bool3
+@
+<<Time>>=
+TTime
+@
+<<Time Definition>>=
+ttime
+@
+<<UtilStreamChar>>=
+UtilStream
+@
+<<UtilStreamChar Definition>>=
+ustream
+@
+<<UtilStreamString>>=
+UtilStream_String
+@
+<<UtilStreamString Definition>>=
+ustream-s
+@
+<<UtilStreamDrop>>=
+UtilStream_Drop
+@
+<<UtilStreamDrop Definition>>=
+ustream-d
+@
+<<UtilTest>>=
+utiltest
+@
+<<UtilTest Definition>>=
+utiltest
+@

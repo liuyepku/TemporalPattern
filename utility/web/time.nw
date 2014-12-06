@@ -1,0 +1,402 @@
+@
+
+\section{Time}
+\index{time!floating point}
+
+A couple of C functions provide floating point time representation.
+
+<<Time Global>>=
+typedef TData <<Time>>;
+@
+
+The point in time with \LA Time\RA\ representation [[0.0]] is set to
+the point in time when the object code is initialized. The floating
+point representation corresponds to the human's imagination of
+time. Furthermore, all operators to add, subtract times etc.\ are
+given naturally.
+
+\FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The function [[set_zero_time]] moves the zero point in time to the actual point
+in time, which can be obtained by [[actual_time]]. The time that has passed
+since [[t]] is given by [[passed_time_since(t)]]. The [[decode_time(t)]]
+function returns a (pointer to a) string representation of time [[t]].
+
+<<Time Public Functions>>=
+void set_zero_time();
+<<Time>> actual_time();
+<<Time>> passed_time_since(<<Time>>);
+char* decode_time(<<Time>>);
+@
+
+A often used time axis is the number of seconds and microseconds since the
+first january of 1970.\index{time!year 1970} To convert easily between this
+standard format, the [[set_time_1970]] and [[get_time_1970]] functions can be
+used. The [[set_zero_time]] function sets the zero time to a 1970
+time.
+
+<<Time Public Functions>>=
+<<Time>> set_1970_time(const long,const long);
+void get_1970_time(const <<Time>>&,long&,long&);
+void set_zero_time(const long);
+@
+
+We provide several time constants:
+
+<<Time Global>>=
+#define POS_IMPOSSIBLE_TIME ((<<Time>>)1.0E10)
+#define NEG_IMPOSSIBLE_TIME ((<<Time>>)-1.0E10)
+#define ZERO_TIME ((<<Time>>)0.0)
+#define ONE_SECOND ((<<Time>>)1.0)
+#define TEN_SECONDS ((<<Time>>)10.0)
+#define HUNDRED_SECONDS ((<<Time>>)100.0)
+@
+
+
+The definitions of [[__BORLANDC__]] and [[__unix]] switch between the machine
+dependent parts of the implementation at compile time.
+
+\ifsourcecode
+
+\subsection{Floating Point Time} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+To get the current time we need to call system functions. Two system are
+supported: Windows 95/NT (tested under Borland C++ 5.02) and UNIX (tested under
+SGI IRIX, Linux). Depending on the system we use different system functions and
+internal time representations to convert into [[Time]].
+
+In both cases, we need to define a point in time representing zero time and a
+function [[init_zero_time]] to initialize it. The [[set_zero_time]] function
+performs this initialization:
+
+<<Time Implementation>>=
+
+void 
+set_zero_time
+  (
+  ) 
+  { 
+  g_zerotime = init_zero_time(0);
+  }
+@
+
+To obtain the current point in time, we need some system dependent
+instructions.
+
+<<Time Implementation>>=
+
+<<Time>> actual_time
+  (
+  )
+  {
+  <<Time>> floattime;
+  <<Time: get current systemtime and set [[floattime]]>>
+  return floattime;
+  }
+@
+
+Given a time [[a_floattime]] the [[passed_time_since]] function returns the
+time difference between [[a_floattime]] and [[actual_time()]].
+
+<<Time Implementation>>=
+
+<<Time>> passed_time_since
+  (
+  <<Time>> a_floattime
+  )
+  {
+  <<Time>> now( actual_time() );
+  return (now-a_floattime);
+  }
+@
+
+The [[decode_time]] function converts the time [[a_floattime]] into a character
+string that contains the global time (not the floating point number). As the
+system time representation is involved, we need again some system dependent
+instructions.
+
+<<Time Implementation>>=
+
+char* decode_time
+  (
+  <<Time>> a_floattime
+  )
+  {
+  <<Time: convert [[a_floattime]] to string and return char*>>
+  }
+@
+
+\subsection{1970 Time} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Again we have to use machine dependent code to implement these functions
+completely.
+
+<<Time Implementation>>=
+
+void set_zero_time
+  (
+  const long a_sec
+  )
+  {
+  g_zerotime = init_zero_time(a_sec);
+  }
+
+<<Time>> set_1970_time
+  (
+  const long a_sec,
+  const long a_usec
+  )
+  {
+  <<Time>> floattime;
+  <<Time: set floattime to [[a_sec]]/[[a_usec]] since 1970>>
+  return floattime;
+  }
+
+void get_1970_time
+  (
+  const <<Time>>& a_floattime,
+  long &ar_sec,
+  long &ar_usec
+  )
+  {
+  <<Time: get [[ar_sec]]/[[ar_usec]] since 1970 from [[a_floattime]]>>
+  }
+@
+  
+\subsection{Machine Dependent Part} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+[980911: Every following code chunk starts with [[# ifdef MACHINE]] and will
+be continued by [[#elif OTHER_MACHINE]]. At the end of this section, we close
+all machine dependent chunks with an error message to indicate, that there is
+no realization of these chunks for this machine.] 
+
+
+\subsubsection{Windows 95/NT} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+With Borland C++ we use the following internal time representation
+
+<<Time Instantiation>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  struct timeb g_zerotime = init_zero_time(0);
+@
+
+which can be found in 
+
+<<Time Source Includes>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+#  include <sys\timeb.h>
+#  include <time.h>
+#  include <math.h>
+// struct timeb
+//   {
+//   long  time;
+//   short millitm;
+//   short timezone;
+//   short dstflag;
+//   };
+#endif
+@
+
+<<Time Private Functions>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  struct timeb init_zero_time(const long);
+@
+
+<<Time Implementation>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  struct timeb init_zero_time
+    (
+    const long a_sec
+    )
+    {
+    struct timeb systemtime;
+    if (a_sec==0)
+      {
+      ftime(&systemtime);
+      }
+    else
+      {
+      systemtime.time = a_sec;
+      systemtime.millitm = 0;
+      }
+    return systemtime;
+    }
+@
+  
+<<Time: get current systemtime and set [[floattime]]>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  struct timeb systemtime;
+  ftime(&systemtime); 
+  floattime =
+              (systemtime.time-g_zerotime.time)
+    + MILLI * (systemtime.millitm-g_zerotime.millitm);
+@
+
+<<Time: convert [[a_floattime]] to string and return char*>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  long l = (long int)(a_floattime) + g_zerotime.time; 
+  return asctime( gmtime( &l ) );
+@
+
+<<Time: set floattime to [[a_sec]]/[[a_usec]] since 1970>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  floattime = 
+              (a_sec-g_zerotime.time)
+    + MICRO * (a_usec-g_zerotime.millitm*KILO);
+@
+
+<<Time: get [[ar_sec]]/[[ar_usec]] since 1970 from [[a_floattime]]>>=
+#if defined(__BORLANDC__) || defined(_MSC_VER)
+  long secs = (long)(a_floattime);
+  ar_sec  = g_zerotime.time+secs; 
+  ar_usec = (long)(g_zerotime.millitm+MEGA*(a_floattime-secs)); 
+  if ((secs<0) && (ar_sec>0) && (ar_usec<0))
+    {
+    --ar_sec;
+    ar_usec += (long)MEGA;
+    }
+@
+
+
+
+\subsubsection{UNIX} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+<<Time Instantiation>>=
+#elif __unix
+  struct timeval g_zerotime = init_zero_time(0);
+@
+
+<<Time Source Includes>>=
+#ifdef __unix
+#  include <sys/time.h>
+#  include <math.h>
+#  include <fstream.h>
+// struct timeval
+//   {
+//   long tv_sec;        /* seconds since Jan. 1, 1970 */
+//   long tv_usec;       /* and microseconds */
+//   };
+#endif
+@
+
+<<Time Private Functions>>=
+#elif __unix
+  struct timeval init_zero_time(const long);
+@
+
+<<Time Implementation>>=
+#elif __unix
+struct timeval
+init_zero_time
+  (
+  const long a_sec
+  )
+  {
+  struct timeval systemtime;
+  struct timezone systemzone;
+  if (a_sec==0)
+    {
+    gettimeofday(&systemtime,&systemzone);
+    }
+  else
+    {
+    systemtime.tv_sec = a_sec;
+    }
+  systemtime.tv_usec=0;
+  return systemtime;
+  }
+@
+
+<<Time: get current systemtime and set [[floattime]]>>=
+#elif __unix
+  struct timeval systemtime;
+  struct timezone systemzone;
+  gettimeofday(&systemtime,&systemzone);
+  floattime = 
+              (systemtime.tv_sec-g_zerotime.tv_sec) 
+    + MICRO * (systemtime.tv_usec);
+@
+
+<<Time: convert [[a_floattime]] to string and return char*>>=
+#elif __unix
+  time_t l = (time_t)(a_floattime) + (time_t)(g_zerotime.tv_sec);
+  return asctime( gmtime( &l ) );
+@
+
+<<Time: set floattime to [[a_sec]]/[[a_usec]] since 1970>>=
+#elif __unix
+  floattime = 
+               (a_sec-g_zerotime.tv_sec) 
+     + MICRO * a_usec; 
+@
+
+<<Time: get [[ar_sec]]/[[ar_usec]] since 1970 from [[a_floattime]]>>=
+#elif __unix
+  long secs = (long)(a_floattime); 
+  ar_sec  = g_zerotime.tv_sec+secs; 
+  ar_usec = (long)(MEGA*(a_floattime-secs)); 
+  if ((secs<0) && (ar_sec>0) && (ar_usec<0))
+    {
+    --ar_sec;
+    ar_usec += (long)MEGA;
+    }
+@
+
+
+\subsubsection{No machine specified}
+
+[980911: If none of the above implementations satisfies the compiler, we print
+an error.]
+
+<<Time: error: no system specific code provided>>=
+#else
+# error "No system specific code provided."
+#endif
+@
+
+<<Time Instantiation>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time Private Functions>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time Implementation>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time: get current systemtime and set [[floattime]]>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time: convert [[a_floattime]] to string and return char*>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time: set floattime to [[a_sec]]/[[a_usec]] since 1970>>=
+<<Time: error: no system specific code provided>>
+@
+
+<<Time: get [[ar_sec]]/[[ar_usec]] since 1970 from [[a_floattime]]>>=
+<<Time: error: no system specific code provided>>
+@
+
+\fi % sourcecode
+
+
+\begin{source}
+\subsection*{Administrata} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<Time Usage>>=
+time [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<Time Header Includes>>=
+#include "<<Constants Definition>>.hpp" // types/constants
+@
+<<Time History>>=
+@
+\end{source}

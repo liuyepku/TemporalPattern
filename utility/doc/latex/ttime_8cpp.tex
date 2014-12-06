@@ -1,0 +1,91 @@
+\hypertarget{ttime_8cpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ttime.cpp File Reference}
+\label{ttime_8cpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ttime.\+cpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ttime.\+cpp}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{ttime_8cpp_a7f3c3917e572b822ed4534a9dfc5e755}{set\+\_\+zero\+\_\+time} ()
+\item 
+T\+Time \hyperlink{ttime_8cpp_ae7d204b4c3a91b2b675611bc6767cbb7}{actual\+\_\+time} ()
+\item 
+T\+Time \hyperlink{ttime_8cpp_a5bdd5624ae6df588219dfd2e1911ef69}{passed\+\_\+time\+\_\+since} (T\+Time a\+\_\+floattime)
+\item 
+char $\ast$ \hyperlink{ttime_8cpp_aca8e1025080ee304373b6d30656a1c48}{decode\+\_\+time} (T\+Time a\+\_\+floattime)
+\item 
+T\+Time \hyperlink{ttime_8cpp_aa4a4463ff7edf1ad7edcfaf0a936ae89}{set\+\_\+1970\+\_\+time} (const long a\+\_\+sec, const long a\+\_\+usec)
+\item 
+void \hyperlink{ttime_8cpp_a438a255aa820f2032ade2cd7a0950471}{get\+\_\+1970\+\_\+time} (const T\+Time \&a\+\_\+floattime, long \&ar\+\_\+sec, long \&ar\+\_\+usec)
+\item 
+void \hyperlink{ttime_8cpp_aa245ce1480ca390560884383bc6456bf}{set\+\_\+zero\+\_\+time} (const long a\+\_\+sec)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A couple of C functions providing floating point time. 
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org} 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ttime_8cpp_ae7d204b4c3a91b2b675611bc6767cbb7}{}\index{ttime.\+cpp@{ttime.\+cpp}!actual\+\_\+time@{actual\+\_\+time}}
+\index{actual\+\_\+time@{actual\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{actual\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}T\+Time actual\+\_\+time (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_ae7d204b4c3a91b2b675611bc6767cbb7}
+Return current time -- relative to zero time. \hypertarget{ttime_8cpp_aca8e1025080ee304373b6d30656a1c48}{}\index{ttime.\+cpp@{ttime.\+cpp}!decode\+\_\+time@{decode\+\_\+time}}
+\index{decode\+\_\+time@{decode\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{decode\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ decode\+\_\+time (
+\begin{DoxyParamCaption}
+\item[{T\+Time}]{a\+\_\+floattime}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_aca8e1025080ee304373b6d30656a1c48}
+Return a pointer to a string representation of {\ttfamily a\+\_\+floattime}.
+
+The {\ttfamily decode\+\_\+time} function converts the time {\ttfamily a\+\_\+floattime} into a character string that contains the global time (not the floating point number). Since the system time representation is involved, we need again some system dependent instructions. \hypertarget{ttime_8cpp_a438a255aa820f2032ade2cd7a0950471}{}\index{ttime.\+cpp@{ttime.\+cpp}!get\+\_\+1970\+\_\+time@{get\+\_\+1970\+\_\+time}}
+\index{get\+\_\+1970\+\_\+time@{get\+\_\+1970\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{get\+\_\+1970\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}void get\+\_\+1970\+\_\+time (
+\begin{DoxyParamCaption}
+\item[{const T\+Time \&}]{a\+\_\+floattime, }
+\item[{long \&}]{ar\+\_\+sec, }
+\item[{long \&}]{ar\+\_\+usec}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_a438a255aa820f2032ade2cd7a0950471}
+Convert to 1970 time.
+
+Converts a floating point time into seconds and microseconds passed since Jan, 1st, 1970. \hypertarget{ttime_8cpp_a5bdd5624ae6df588219dfd2e1911ef69}{}\index{ttime.\+cpp@{ttime.\+cpp}!passed\+\_\+time\+\_\+since@{passed\+\_\+time\+\_\+since}}
+\index{passed\+\_\+time\+\_\+since@{passed\+\_\+time\+\_\+since}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{passed\+\_\+time\+\_\+since}]{\setlength{\rightskip}{0pt plus 5cm}T\+Time passed\+\_\+time\+\_\+since (
+\begin{DoxyParamCaption}
+\item[{T\+Time}]{a\+\_\+floattime}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_a5bdd5624ae6df588219dfd2e1911ef69}
+Return time passed since {\ttfamily a\+\_\+floattime}. \hypertarget{ttime_8cpp_aa4a4463ff7edf1ad7edcfaf0a936ae89}{}\index{ttime.\+cpp@{ttime.\+cpp}!set\+\_\+1970\+\_\+time@{set\+\_\+1970\+\_\+time}}
+\index{set\+\_\+1970\+\_\+time@{set\+\_\+1970\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{set\+\_\+1970\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}T\+Time set\+\_\+1970\+\_\+time (
+\begin{DoxyParamCaption}
+\item[{const long}]{a\+\_\+sec, }
+\item[{const long}]{a\+\_\+usec}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_aa4a4463ff7edf1ad7edcfaf0a936ae89}
+Convert from 1970 time.
+
+Converts a point in time (specified via secs and microsecs from Jan, 1st, 1970) in the floating point time representation. \hypertarget{ttime_8cpp_a7f3c3917e572b822ed4534a9dfc5e755}{}\index{ttime.\+cpp@{ttime.\+cpp}!set\+\_\+zero\+\_\+time@{set\+\_\+zero\+\_\+time}}
+\index{set\+\_\+zero\+\_\+time@{set\+\_\+zero\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{set\+\_\+zero\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}void set\+\_\+zero\+\_\+time (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_a7f3c3917e572b822ed4534a9dfc5e755}
+To get the current time we need to call system functions. Two system are supported\+: Windows 95/\+N\+T (tested under Borland C++ 5.\+02) and U\+N\+I\+X (tested under S\+G\+I I\+R\+I\+X, Linux). Depending on the system we use different system functions and internal time representations. On U\+N\+I\+X systems the configure script automatically determines which time representation (timeb or timeval) can be used. On Windows systems we simply check for {\bfseries B\+O\+R\+L\+A\+N\+D\+C} and \+\_\+\+M\+S\+C\+\_\+\+V\+E\+R macros (and use timeb). The global {\ttfamily g\+\_\+zerotime} variable stores the point in time (system dependent representation) which is associated with (float)0.\+0. Determine zero time.
+
+The function {\ttfamily set\+\_\+zero\+\_\+time} moves the zero point in time to the actual point in time. \hypertarget{ttime_8cpp_aa245ce1480ca390560884383bc6456bf}{}\index{ttime.\+cpp@{ttime.\+cpp}!set\+\_\+zero\+\_\+time@{set\+\_\+zero\+\_\+time}}
+\index{set\+\_\+zero\+\_\+time@{set\+\_\+zero\+\_\+time}!ttime.\+cpp@{ttime.\+cpp}}
+\subsubsection[{set\+\_\+zero\+\_\+time}]{\setlength{\rightskip}{0pt plus 5cm}void set\+\_\+zero\+\_\+time (
+\begin{DoxyParamCaption}
+\item[{const long}]{a\+\_\+sec}
+\end{DoxyParamCaption}
+)}\label{ttime_8cpp_aa245ce1480ca390560884383bc6456bf}
+Set the zero floating-\/point time to the time {\ttfamily a\+\_\+sec} seconds after Jan, 1st, 1970. 

@@ -1,0 +1,20 @@
+
+README file
+-----------
+
+This package contains several utility files for stream analysis,
+string conversion, primitive time handling, etc. In the subdirectory
+doc/ you can find a postscript documentation.
+
+Read INSTALL if you want to know how to compile this package. The
+package has been developed under Linux, using the egcs-2.91.66 C++
+compiler. The package has been successfully used on the following
+platforms/compilers:
+
+  Linux 2.2.3 (PC) / egcs-2.91.66
+  Digital unix v4.0B (rev 564) / Compaq C++ V6.2-024
+  Windows NT / Microsoft Visual Studio Prof. 5.1
+  IRIX 6.2 / CC
+
+See AUTHORS file for contact information.
+

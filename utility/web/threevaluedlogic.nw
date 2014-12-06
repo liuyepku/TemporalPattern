@@ -1,0 +1,34 @@
+@
+
+\section{Three-Valued Logic}
+
+<<TVL Usage>>=
+threevaluedlogic [WITH] { UTIL } [DEFS] CLASS
+@
+
+We introduce the following type to handle three valued logic: true,
+false, unknown.
+
+<<TVL Typedefs>>=
+enum value_type { QUERY_POSITIVE,QUERY_NEGATIVE,QUERY_UNKNOWN };
+@
+<<TVL Private Data>>=
+value_type m_value;
+@
+
+<<TVL Public Functions>>=
+inline <<TVL>>() : m_value(QUERY_UNKNOWN) {}
+inline <<TVL>>(bool b) : m_value((b)?QUERY_POSITIVE:QUERY_NEGATIVE) {}
+inline void operator=(const bool b) {m_value=(b)?QUERY_POSITIVE:QUERY_NEGATIVE;}
+inline void operator|=(const bool b) { if (b) m_value=QUERY_POSITIVE; }
+inline bool operator==(const value_type& x) { return x==m_value; }
+inline bool operator!=(const value_type& x) { return x!=m_value; }
+inline bool operator==(const <<TVL>>& x) { return x.m_value==m_value; }
+inline bool operator!=(const <<TVL>>& x) { return x.m_value!=m_value; }
+@
+
+<<TVL Associates>>=
+#define QUERY_NEGATIVE bool3::QUERY_NEGATIVE
+#define QUERY_POSITIVE bool3::QUERY_POSITIVE
+#define QUERY_UNKNOWN bool3::QUERY_UNKNOWN
+@

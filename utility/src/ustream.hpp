@@ -1,0 +1,131 @@
+
+/*  utility package -- Copyright (C) 1999-2001 Frank Hoeppner
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/** \file ustream.hpp
+    \author (c) 1999-2001 Frank Hoeppner <frank.hoeppner@ieee.org>
+
+    \brief Stream i/o.
+*/
+
+#ifndef UtilStream_HEADER
+#define UtilStream_HEADER
+
+/* configuration include */
+#ifdef HAVE_CONFIG_H
+/*
+//FILETREE_IFDEF HAVE_CONFIG_H
+*/
+#include "config.h"
+/*
+//FILETREE_ENDIF
+*/
+#endif
+
+#include <iostream>
+#include "define.hpp" // char_cc
+#include <string.h> // strlen
+#include "Chars.hpp" // Chars
+#include <string> // string
+#include <map>
+#include "stlutil.hpp" // less_dereference
+#include "ttime.hpp"
+
+//typedef enum util_restore_mode { PUT_BACK_IF_FOUND, NO_PUT_BACK };
+//typedef enum util_compare_mode { COMPARE_CAPITALS, COMPARE_AS_IS };
+//typedef enum util_skip_mode { SKIP_WHITE_CHARS, SKIP_NOTHING };
+
+struct keyword_entry
+  {
+  char *name;
+  int identifier;
+  };
+
+typedef map< string const*, int, less_dereference<string const*> > str2idx_type;
+
+bool is_followed_by(istream&,const char,bool = true,bool = true);
+int is_followed_by(istream&,const keyword_entry*, bool put_back_if_found=true,
+        bool capital_letters=true,bool skip_white=true,int default_value=-1);
+int is_followed_by(istream&,const str2idx_type&, bool put_back_if_found=true,
+        bool capital_letters=true,bool skip_white=true,int default_value=-1);
+bool is_followed_by(istream& is,const char*,bool = true,
+        bool = false,bool = true);
+char* get_keyword(const keyword_entry*,int);
+
+ 
+template <class S> void read_white(istream&,S&);
+void read_white(istream&,char*,size_t);
+void read_white(istream&);
+
+template <class S> void read_word_break(istream&,const char*,S&);
+void read_word_break(istream&,const char*,char*,size_t);
+void read_word_break(istream&,const char*);
+
+template <class S> inline void read_word(istream& is,S& s)
+  { read_word_break(is,NULL,s); }
+inline void read_word(istream& is,char *p_text,size_t maxlen)
+  { read_word_break(is,NULL,p_text,maxlen); }
+inline void read_word(istream& is)
+  { read_word_break(is,NULL); }
+
+template <class S> bool read_until(istream&,const char*,S&,bool=true);
+bool read_until(istream&,const char*,char*,size_t,bool=true);
+bool read_until(istream&,const char*);
+
+template <class S> inline void read_line(istream& is,S& s)
+  { read_until(is,"\n",s); }
+inline void read_line(istream& is,char *p_text,size_t maxlen)
+  { read_until(is,"\n",p_text,maxlen); }
+inline void read_line(istream& is)
+  { read_until(is,"\n"); }
+
+template <class S> void read_until_eof(istream&,S&);
+void read_until_eof(istream&,char*,size_t);
+
+void read_lines_starting_with(istream&,const char*);
+
+template <class S> void read_until_matching_paranthesis(istream&,char,char,S&,bool=true);
+void read_until_matching_paranthesis(istream& is,char,char,char*,size_t,bool=true);
+void read_until_matching_paranthesis(istream& is,char,char);
+
+bool read_data(istream&,char_cc , char *p_text, size_t maxlen);
+
+
+template <class S> void read_entry(istream&,S&,bool=false);
+void read_entry(istream&,char*,size_t,bool=false);
+void read_entry(istream&);
+
+class ProgressBar
+  {
+  public:
+    ProgressBar(float,float*,float,TTime = 0.25,int = 40);
+    bool operator()() const;
+    void write(ostream&) const;
+  private:
+    float *mp_value;
+    float m_min,m_max;
+    int m_length;
+    TTime m_mindelay;
+    mutable TTime m_lastcall;
+    mutable int m_progress,m_tick;
+    mutable char m_bar[81];
+  };
+
+inline ostream& operator<<(ostream& os,const ProgressBar& bar)
+  { bar.write(os); return os; }
+
+#endif /* UtilStream_HEADER */

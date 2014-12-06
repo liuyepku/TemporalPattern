@@ -1,0 +1,4 @@
+reconf
+rm $HOME/my/local
+ln -s $HOME/my/local_plain $HOME/my/local
+configure --prefix=$HOME/my/local

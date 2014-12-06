@@ -1,0 +1,115 @@
+@
+
+\section{Definition of boolean datatype}
+\label{defbool:sec} \index{bool} \index{boolean|see{bool}}
+
+Include this file if you use a [[bool]] data type. 
+
+\begin{source}
+<<DefBool Usage>>=
+defbool [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<DefBool History>>=
+20000413 fh added stob function
+@
+<<DefBool Source Includes>>=
+#include <string.h>
+@
+\end{source}
+
+\subsection*{Definition} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We declare 
+
+<<DefBool define bool>>=
+typedef int bool;
+#define true 1
+#define false 0
+@
+
+in case we have no STL available. If there is an STL we define bool by 
+including either [[bool.h]] or [[stl_config.h]].
+
+\begin{source}
+<<DefBool Global>>=
+#ifdef STL_FOUND
+
+#ifdef BOOL_DEFINED_IN_BOOL_H
+#include <bool.h>
+#elif defined(BOOL_DEFINED_IN_STL_CONFIG_H)
+#include <stl_config.h>
+#endif
+
+#else
+
+<<DefBool define bool>>
+
+#endif
+@
+\end{source}
+
+
+\topic{Bool Conversion} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This inline \function{itob} converts [[int]] to
+[[bool]].\footnote{Some compilers distinguish carefully between bool
+and int, {\tt bool space = isspace(c);} yields a warning because {\tt
+isspace} returns {\tt int}.}
+
+<<DefBool Public Functions>>=
+inline bool itob(int i) { return (i ? true : false); }
+@
+
+This \function{strtob} takes a character string and returns a boolean
+value according to the string contents (yes, no, true and false will
+be detected, otherwise [[false]] is returned).
+
+<<DefBool Public Functions>>=
+bool strtob(const char *);
+@
+
+\begin{source}
+<<DefBool Instantiation>>=
+const char booltext[][6] = {"true","false","yes","no"};
+@
+<<DefBool Implementation>>=
+bool
+strtob
+  (
+  const char * ap_text
+  )
+  {
+  if (strcmp(ap_text,"yes")==0) return true; else
+  if (strcmp(ap_text,"no")==0) return false; else
+  if (strcmp(ap_text,"true")==0) return true; else
+  if (strcmp(ap_text,"false")==0) return false; 
+/*
+  if (strcmp(ap_text,"yes")==0) return true; else
+  if (strcmp(ap_text,"no")==0) return false; else
+  if (strcmp(ap_text,"true")==0) return true; else
+  if (strcmp(ap_text,"false")==0) return false; 
+*/
+  return false;
+  }
+@
+\end{source}
+
+Vice versa, the next \function{btostr} turns a boolean value into a
+string (reference).
+
+<<DefBool Public Functions>>=
+const char* btostr(bool);
+@
+\begin{source}
+<<DefBool Implementation>>=
+const char*
+btostr
+  (
+  bool a_boolean
+  )
+  {
+  return (a_boolean)?(const char*)booltext[0]:(const char*)booltext[1];
+  }
+@
+\end{source}
+@

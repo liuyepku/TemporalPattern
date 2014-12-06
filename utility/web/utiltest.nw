@@ -1,0 +1,38 @@
+@
+
+\begin{hacker}
+\topic{Test Program} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+You can find small pieces of test code together with the source
+code. All these tests are combined to the [[utiltest]]
+\program{utiltest}, which returns $0$ if all tests were ok, and $-1$
+otherwise.
+\end{hacker}
+
+A test program\footnote{very simple, needs much improvement...} is
+compiled and executed when typing {\tt make check}.\index{testing}
+
+\begin{source}
+<<UtilTest Usage>>=
+utiltest   [WITH] { UTIL } [DEFS] MAIN
+strconvert [WITH] { } 
+@
+<<UtilTest Source Includes>>=
+#include "<<StrConvertChar Definition>>.hpp"
+@
+
+<<UtilTest Implementation>>=
+int 
+main()
+  {
+  bool ok(true);
+
+  <<UtilTest: test program>>
+
+  cout @<< "<<UtilTest>>: ";
+  if (ok) cout << "ok"; else cout << "failure";
+  cout << endl;
+  return (ok)?0:-1;
+  }
+@
+\end{source}

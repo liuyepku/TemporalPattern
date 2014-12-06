@@ -1,0 +1,31 @@
+@
+
+\begin{hacker}
+\section{The Library Header File} %%%%%%%%%%%%%%%%%%%%%%%%
+
+The package contains a header file for each source file, however, when
+installing the library we have to install 
+
+<<LibHeader Usage>>=
+libheader [WITH] { UTIL } [DEFS] HEADER [EXPORTS] util
+
+defbool   [WITH] { }
+constants [WITH] { }
+time      [WITH] { }
+stlstream [WITH] { }
+utilstream [WITH] { }
+strconvert [WITH] { }
+chars [WITH]  <=== problems with classes ! 
+@
+
+<<LibHeader Global>>=
+<<DefBool Global>>
+<<Constants Global>>
+<<TTime Global>>
+@
+
+<<LibHeader Public Functions>>=
+<<DefBool Public Functions>>
+<<Constants Public Functions>>
+<<TTime Public Functions>>
+@

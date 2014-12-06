@@ -1,0 +1,240 @@
+\hypertarget{ustream_8hpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.hpp File Reference}
+\label{ustream_8hpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.\+hpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.\+hpp}}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ustream_8hpp_ac0b017fe8b1d4115308603c8842c0bb9}{}typedef map$<$ string const $\ast$, int, \hyperlink{structless__dereference}{less\+\_\+dereference}$<$ string const $\ast$ $>$ $>$ {\bfseries str2idx\+\_\+type}\label{ustream_8hpp_ac0b017fe8b1d4115308603c8842c0bb9}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ustream_8hpp_aa95ede07d42add055b92ca618eb61edc}{}bool {\bfseries is\+\_\+followed\+\_\+by} (istream \&, const char, bool=true, bool=true)\label{ustream_8hpp_aa95ede07d42add055b92ca618eb61edc}
+
+\item 
+\hypertarget{ustream_8hpp_a15dd4fab60e52570f9287a63be2ac3c0}{}int {\bfseries is\+\_\+followed\+\_\+by} (istream \&, const keyword\+\_\+entry $\ast$, bool put\+\_\+back\+\_\+if\+\_\+found=true, bool capital\+\_\+letters=true, bool skip\+\_\+white=true, int default\+\_\+value=-\/1)\label{ustream_8hpp_a15dd4fab60e52570f9287a63be2ac3c0}
+
+\item 
+int \hyperlink{ustream_8hpp_aa3f12b4b2adbf236310eff13011d0a34}{is\+\_\+followed\+\_\+by} (istream \&, const str2idx\+\_\+type \&, bool put\+\_\+back\+\_\+if\+\_\+found=true, bool capital\+\_\+letters=true, bool skip\+\_\+white=true, int default\+\_\+value=-\/1)
+\item 
+bool \hyperlink{ustream_8hpp_adc5159991e9c3875e5ce5d75b365c1f9}{is\+\_\+followed\+\_\+by} (istream \&is, const char $\ast$, bool=true, bool=false, bool=true)
+\item 
+char $\ast$ \hyperlink{ustream_8hpp_a6e38da6dcaac99ba483c8501d8c263a8}{get\+\_\+keyword} (const keyword\+\_\+entry $\ast$, int)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8hpp_a70e2a64f2418b4ca2df0e537314bbbd7}{read\+\_\+white} (istream \&, S \&)
+\item 
+void \hyperlink{ustream_8hpp_ac0df82f5e76f6f5e5232413fc6c81aac}{read\+\_\+white} (istream \&, char $\ast$, size\+\_\+t)
+\item 
+void \hyperlink{ustream_8hpp_a44271eef2dd064ae4b7988058742e13f}{read\+\_\+white} (istream \&)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8hpp_a0bec45948525fa3b9dfb386ffcc415dd}{read\+\_\+word\+\_\+break} (istream \&, const char $\ast$, S \&)
+\item 
+\hypertarget{ustream_8hpp_a512b8370d380ff22b3648836709ae4c1}{}void {\bfseries read\+\_\+word\+\_\+break} (istream \&, const char $\ast$, char $\ast$, size\+\_\+t)\label{ustream_8hpp_a512b8370d380ff22b3648836709ae4c1}
+
+\item 
+\hypertarget{ustream_8hpp_a637434c538da17762197084afaa0eebe}{}void {\bfseries read\+\_\+word\+\_\+break} (istream \&, const char $\ast$)\label{ustream_8hpp_a637434c538da17762197084afaa0eebe}
+
+\item 
+\hypertarget{ustream_8hpp_a8498c6b26921749f11b5de6d2f854acd}{}{\footnotesize template$<$class S $>$ }\\void {\bfseries read\+\_\+word} (istream \&is, S \&s)\label{ustream_8hpp_a8498c6b26921749f11b5de6d2f854acd}
+
+\item 
+\hypertarget{ustream_8hpp_acfd0c927f6568429dd92919e41a9d30b}{}void {\bfseries read\+\_\+word} (istream \&is, char $\ast$p\+\_\+text, size\+\_\+t maxlen)\label{ustream_8hpp_acfd0c927f6568429dd92919e41a9d30b}
+
+\item 
+\hypertarget{ustream_8hpp_adb16d92b5b6f37aed9dacbe40793c00c}{}void {\bfseries read\+\_\+word} (istream \&is)\label{ustream_8hpp_adb16d92b5b6f37aed9dacbe40793c00c}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\bool \hyperlink{ustream_8hpp_aa484af8afb18a974bc1887407d10c265}{read\+\_\+until} (istream \&, const char $\ast$, S \&, bool=true)
+\item 
+\hypertarget{ustream_8hpp_a76af8a0f98b6fa1fc5336d322afb23e4}{}bool {\bfseries read\+\_\+until} (istream \&, const char $\ast$, char $\ast$, size\+\_\+t, bool=true)\label{ustream_8hpp_a76af8a0f98b6fa1fc5336d322afb23e4}
+
+\item 
+\hypertarget{ustream_8hpp_a1968d00171a3f63f22379fed4d88c40d}{}bool {\bfseries read\+\_\+until} (istream \&, const char $\ast$)\label{ustream_8hpp_a1968d00171a3f63f22379fed4d88c40d}
+
+\item 
+\hypertarget{ustream_8hpp_a5c8ffba0b4a6fac6e79ec2e9e19ee80e}{}{\footnotesize template$<$class S $>$ }\\void {\bfseries read\+\_\+line} (istream \&is, S \&s)\label{ustream_8hpp_a5c8ffba0b4a6fac6e79ec2e9e19ee80e}
+
+\item 
+\hypertarget{ustream_8hpp_afcfb7c78f800e656d4fd6e6816d9253d}{}void {\bfseries read\+\_\+line} (istream \&is, char $\ast$p\+\_\+text, size\+\_\+t maxlen)\label{ustream_8hpp_afcfb7c78f800e656d4fd6e6816d9253d}
+
+\item 
+\hypertarget{ustream_8hpp_a3e9e99cb30a12292ece6649893ea63da}{}void {\bfseries read\+\_\+line} (istream \&is)\label{ustream_8hpp_a3e9e99cb30a12292ece6649893ea63da}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8hpp_a75dcbd94efa4d30ceee3f8f642fb9de1}{read\+\_\+until\+\_\+eof} (istream \&, S \&)
+\item 
+\hypertarget{ustream_8hpp_a9b5fec6e2750bcb3673b745deb24723e}{}void {\bfseries read\+\_\+until\+\_\+eof} (istream \&, char $\ast$, size\+\_\+t)\label{ustream_8hpp_a9b5fec6e2750bcb3673b745deb24723e}
+
+\item 
+void \hyperlink{ustream_8hpp_ac8b45fbd3b133d39f8634e070157d678}{read\+\_\+lines\+\_\+starting\+\_\+with} (istream \&, const char $\ast$)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8hpp_a0f015da5cd04ba74a474262a4389bd7b}{read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&, char, char, S \&, bool=true)
+\item 
+\hypertarget{ustream_8hpp_a0968971caaac2485ff858a2388888063}{}void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&is, char, char, char $\ast$, size\+\_\+t, bool=true)\label{ustream_8hpp_a0968971caaac2485ff858a2388888063}
+
+\item 
+\hypertarget{ustream_8hpp_a587bfcc792243a0895a33cc61d692789}{}void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&is, char, char)\label{ustream_8hpp_a587bfcc792243a0895a33cc61d692789}
+
+\item 
+\hypertarget{ustream_8hpp_aefec6c504aefda16397551fd87efaebb}{}bool {\bfseries read\+\_\+data} (istream \&, char\+\_\+cc, char $\ast$p\+\_\+text, size\+\_\+t maxlen)\label{ustream_8hpp_aefec6c504aefda16397551fd87efaebb}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8hpp_aaf89777ab0b88dd8796ee8b259a0e171}{read\+\_\+entry} (istream \&, S \&, bool=false)
+\item 
+\hypertarget{ustream_8hpp_a460ad5ef8205e28f649df631606a83c3}{}void {\bfseries read\+\_\+entry} (istream \&, char $\ast$, size\+\_\+t, bool=false)\label{ustream_8hpp_a460ad5ef8205e28f649df631606a83c3}
+
+\item 
+\hypertarget{ustream_8hpp_ac2dc17a5443e6e2155a832cbdc6f148f}{}void {\bfseries read\+\_\+entry} (istream \&)\label{ustream_8hpp_ac2dc17a5443e6e2155a832cbdc6f148f}
+
+\item 
+\hypertarget{ustream_8hpp_a5e640e2e03bc675f7af0ad0744bf96fe}{}ostream \& {\bfseries operator$<$$<$} (ostream \&os, const Progress\+Bar \&bar)\label{ustream_8hpp_a5e640e2e03bc675f7af0ad0744bf96fe}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Stream i/o. 
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org} 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ustream_8hpp_a6e38da6dcaac99ba483c8501d8c263a8}{}\index{ustream.\+hpp@{ustream.\+hpp}!get\+\_\+keyword@{get\+\_\+keyword}}
+\index{get\+\_\+keyword@{get\+\_\+keyword}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{get\+\_\+keyword}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ get\+\_\+keyword (
+\begin{DoxyParamCaption}
+\item[{const keyword\+\_\+entry $\ast$}]{ap\+\_\+keywords, }
+\item[{int}]{value}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a6e38da6dcaac99ba483c8501d8c263a8}
+Return the keyword associated with a given return index.
+
+Function seeks for the entry in ap\+\_\+keywords with identifier {\ttfamily value} and returns the associated keyword name. \hypertarget{ustream_8hpp_aa3f12b4b2adbf236310eff13011d0a34}{}\index{ustream.\+hpp@{ustream.\+hpp}!is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}}
+\index{is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{is\+\_\+followed\+\_\+by}]{\setlength{\rightskip}{0pt plus 5cm}int is\+\_\+followed\+\_\+by (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const str2idx\+\_\+type \&}]{map, }
+\item[{bool}]{put\+\_\+back\+\_\+if\+\_\+found, }
+\item[{bool}]{capital\+\_\+letters, }
+\item[{bool}]{skip\+\_\+white, }
+\item[{int}]{default\+\_\+value}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_aa3f12b4b2adbf236310eff13011d0a34}
+Same as above, but keywords are stored in a string map rather than a sorted char array. \hypertarget{ustream_8hpp_adc5159991e9c3875e5ce5d75b365c1f9}{}\index{ustream.\+hpp@{ustream.\+hpp}!is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}}
+\index{is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{is\+\_\+followed\+\_\+by}]{\setlength{\rightskip}{0pt plus 5cm}bool is\+\_\+followed\+\_\+by (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find, }
+\item[{bool}]{put\+\_\+back\+\_\+if\+\_\+found, }
+\item[{bool}]{capital\+\_\+letters, }
+\item[{bool}]{skip\+\_\+white}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_adc5159991e9c3875e5ce5d75b365c1f9}
+Sneak for a word in the input stream.
+
+\begin{DoxyAttention}{Attention}
+If you set {\ttfamily capital\+\_\+letters} to {\ttfamily true}, the keyword {\ttfamily p\+\_\+find} must also be in capital letters. 
+\end{DoxyAttention}
+
+\begin{DoxyParams}{Parameters}
+{\em is} & input stream \\
+\hline
+{\em p\+\_\+find} & is this word next in the input stream? \\
+\hline
+\end{DoxyParams}
+\hypertarget{ustream_8hpp_aaf89777ab0b88dd8796ee8b259a0e171}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+entry@{read\+\_\+entry}}
+\index{read\+\_\+entry@{read\+\_\+entry}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+entry}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+entry (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text, }
+\item[{bool}]{keep\+\_\+delimiter}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_aaf89777ab0b88dd8796ee8b259a0e171}
+Read data entry from stream.
+
+This function reads a single word, the text between \char`\"{}hyphens\char`\"{} or \{parantheses\}. This format is used within Bib\+Te\+X files, for example. In case of a single word, a final separating colon will not be removed from the stream. If {\ttfamily keep\+\_\+delimiter} is {\ttfamily true}, the hyphens and parantheses will also be stored in the {\ttfamily text} output. \hypertarget{ustream_8hpp_ac8b45fbd3b133d39f8634e070157d678}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+lines\+\_\+starting\+\_\+with@{read\+\_\+lines\+\_\+starting\+\_\+with}}
+\index{read\+\_\+lines\+\_\+starting\+\_\+with@{read\+\_\+lines\+\_\+starting\+\_\+with}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+lines\+\_\+starting\+\_\+with}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+lines\+\_\+starting\+\_\+with (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_ac8b45fbd3b133d39f8634e070157d678}
+Read lines with a certain prefix.
+
+This function reads all lines from the stream starting with a certain prefix (2nd parameter). (Useful to skip all comment lines introduced by a certain string.) \hypertarget{ustream_8hpp_aa484af8afb18a974bc1887407d10c265}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+until@{read\+\_\+until}}
+\index{read\+\_\+until@{read\+\_\+until}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+until}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ bool read\+\_\+until (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find, }
+\item[{S \&}]{text, }
+\item[{bool}]{clear\+\_\+text}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_aa484af8afb18a974bc1887407d10c265}
+Read from stream until keyword is found.
+
+This function reads all characters from the stream until the specified keyword (2nd parameter) has been found. The return value specifies whether the keyword has been found or not (end of file). \hypertarget{ustream_8hpp_a75dcbd94efa4d30ceee3f8f642fb9de1}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+until\+\_\+eof@{read\+\_\+until\+\_\+eof}}
+\index{read\+\_\+until\+\_\+eof@{read\+\_\+until\+\_\+eof}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+until\+\_\+eof}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+until\+\_\+eof (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a75dcbd94efa4d30ceee3f8f642fb9de1}
+Read remaining characters until end of stream. \hypertarget{ustream_8hpp_a0f015da5cd04ba74a474262a4389bd7b}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+until\+\_\+matching\+\_\+paranthesis@{read\+\_\+until\+\_\+matching\+\_\+paranthesis}}
+\index{read\+\_\+until\+\_\+matching\+\_\+paranthesis@{read\+\_\+until\+\_\+matching\+\_\+paranthesis}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+until\+\_\+matching\+\_\+paranthesis}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+until\+\_\+matching\+\_\+paranthesis (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{char}]{ip, }
+\item[{char}]{dp, }
+\item[{S \&}]{text, }
+\item[{bool}]{clear\+\_\+text}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a0f015da5cd04ba74a474262a4389bd7b}
+Read text in parantheses.
+
+This function assumes that a certain ``opening\textquotesingle{}\textquotesingle{} paranthesis (2nd parameter) has already been read from the stream. The function reads all characters until the matching ``closing\textquotesingle{}\textquotesingle{} paranthesis (3rd parameter) has been found. \hypertarget{ustream_8hpp_a70e2a64f2418b4ca2df0e537314bbbd7}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a70e2a64f2418b4ca2df0e537314bbbd7}
+Read white spaces from stream.
+
+This function reads all white characters (like spaces, tabs, line feeds) from the stream. \hypertarget{ustream_8hpp_ac0df82f5e76f6f5e5232413fc6c81aac}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{char $\ast$}]{p, }
+\item[{size\+\_\+t}]{l}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_ac0df82f5e76f6f5e5232413fc6c81aac}
+read white-\/space characters from stream into {\ttfamily char$\ast$} \hypertarget{ustream_8hpp_a44271eef2dd064ae4b7988058742e13f}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a44271eef2dd064ae4b7988058742e13f}
+read white-\/space characters from stream \hypertarget{ustream_8hpp_a0bec45948525fa3b9dfb386ffcc415dd}{}\index{ustream.\+hpp@{ustream.\+hpp}!read\+\_\+word\+\_\+break@{read\+\_\+word\+\_\+break}}
+\index{read\+\_\+word\+\_\+break@{read\+\_\+word\+\_\+break}!ustream.\+hpp@{ustream.\+hpp}}
+\subsubsection[{read\+\_\+word\+\_\+break}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+word\+\_\+break (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+delimiter, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8hpp_a0bec45948525fa3b9dfb386ffcc415dd}
+Read from stream until break character found.
+
+Reading is stopped if any of the characters in the second parameter is found. Reading is also stopped at white space characters. If the first (non-\/white) character is a break character, it will not stop reading. The break character will not be removed from the input stream. 

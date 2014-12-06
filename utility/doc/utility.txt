@@ -1,0 +1,194 @@
+
+/**
+
+\mainpage Introduction to LogTrace
+
+The LogTrace package aids a C++ programmer in the debugging
+process by providing a customizable logfile.  
+
+\section INTRO What can LogTrace do for me?
+
+Integrated programming environments provide great debugging support,
+which is unfortunately not consistently available when working on
+different platforms.  Finally you may end up again with some
+
+\verbatim
+cout << "value of x at y is " << x << endl;
+\endverbatim
+
+commands, recompile the code, add some more commands, etc., in order
+to locate the problem. Having fixed the error, you clean up the code
+by deleting the debug commands. Later, you face a different problem
+and may have to re-insert the same commands. With LogTrace you keep
+the debugging commands in your source file, but you can easily turn
+them on and off without compilation. This is done by assigning
+``labels'' or ID's to the debug commands, e.g. the function or class
+name. At the beginning the ID's you are interested in will be read
+from an ASCII file. Any logfile output will be suppressed if the
+assigned ID has not been found in the ID-file. By adding and removing
+ID's from the ID-file you turn logfile messages on and off.
+
+You probably use indentation within your source files to enhance
+readibility. Readability becomes a problem with large logfiles, too,
+therefore you can use \c Log commands in your source code to structure
+the logfile output. Whenever you place a \c LOG macro in your code,
+all output will be indented until the code block ends. This helps you
+to keep track even with many nested function calls.
+
+Of course, it is still possible to compile your source without any
+LogTrace support if you are sure that all errors have been removed. In
+that case, deliver your program with the \c logtrace.h header file,
+the library \c liblogtrace will not be necessary.
+
+\section INSTALL Getting started
+
+LogTrace makes use of the \c utility library, which is also
+available under LGPL. Install this library first, then type
+
+\verbatim
+gunzip logtrace-?.?.?.tar.gz
+tar -xvf logtrace-?.?.?.tar
+cd logtrace-?.?.?
+./configure
+make install
+\endverbatim
+
+See also the file \c INSTALL for further information.
+
+The subdirectory \c doc/ contains this document. If you type \c make
+\c check some examples will be compiled and executed. This example is
+a good point to start, if you are new with LogTrace. Inspect the
+simple source code, play around with the LogTrace commands, change the
+contents of the ID file, and observe the changes in the logfile. The
+example is compiled and executed whenever you type \c make \c check.
+
+
+\section USAGE Using LogTrace in your own project
+
+Here is how to use LogTrace in your own projects. The \c
+LOGTRACE_LEVEL macro controls the behaviour of LogTrace.
+
+\li level 0: only errors and warnings are printed to stderr, 
+
+\li level 1: same as 0, additionally invariant violations are printed,
+
+\li level 2: same as 1, but errors, warnings, invariant violations are
+also written into a logfile, together with the log stack (if
+available). The stderr output contains the function in which the error
+occured. 
+
+\li level 3: same as level 2, but additional output by TRACE_...
+macros is shown in the logfile. An ID-file can be used to specify
+which TRACE commands shall produce output.
+
+If no \c LOGTRACE_LEVEL is specified, we set it to level 0 if
+\c LOGTRACE_DEBUG is not defined and to level 3 if \c LOGTRACE_DEBUG is
+defined. (Note that this is not 100% compatible to prior versions,
+which produced _no_ output at all if \c LOGTRACE_DEBUG was undefined.)
+
+If you think your program is debugged and you want to measure
+execution speed use level 0. Otherwise you should use at least level
+1, such that you are informed about invariant violations. Levels 2 and
+3 take more time, but can be extremely helpful by providing the
+context in which an error has occured (log stack). Use level 3 and
+history mode if errors occur occassionally and you need as much
+information as possible without producing tons of logfile data before
+the error actually occurs.
+
+In earlier releases of LogTrace, the \c LOGTRACE_DEBUG macro has been
+used to control the behaviour of the library. With version 1.3.0 and
+above, we use the \c LOGTRACE_LEVEL macro. (With the old version, you
+had to include the header \c trace.hpp, it is therefore still
+delivered with this package to ensure downward compatibility.)
+
+\subsection MODES Execution Modes
+
+There are two different modes for LogTrace, full debug mode and
+history mode. In full mode, all lines of trace output (determined by
+the IDs in the ID-file) go straight into the logfile. In history mode,
+logfile output is surpressed but written into an internal ring
+buffer. In case of an error, warning, or invariant violation, the
+history buffer is flushed into the logfile. Thus you can avoid
+creating megabytes of logdata if a problem occurs after a the program
+has run for a while. Of course, the execution speed is not reduced
+significantly when using the history buffer, just like in case of full
+mode all trace output has to be written into the buffer, because we
+cannot know in advance when an error will occur. See INIT_LOGTRACE for
+some more details.
+
+\section NOTES Some notes
+
+\subsection MACROUSAGE Intensive macro usage
+
+Although the package is implemented by means of some simple classes,
+the user should call only the macros (see logtrace.h). With C++
+typesafe template functions should be preferred over macros, but there
+are some limitations especially in the context of this debugging
+library. For example, we want to get file information via \c __FILE__
+and \c __LINE__. When using template functions, we would have to pass
+these macros as arguments to a template function, e.g.  \c
+ERROR("description",__FILE__,__LINE__), because we cannot place the \c
+__FILE__ and \c __LINE__ macros within the template function, since in
+this case they would return the file location of the template function
+implementation, not the location where the error occured. There is no
+such problem when using macros, of course. Thus, in this case macros
+are the choice of the lazy programmer, who does not want to type in
+the \c __FILE__ and \c __LINE__ whenever a debugging function is
+called. (Although there are also some problems with macros, see
+TRACE(msg).)
+
+There are major drawbacks when using macros, for example, we cannot
+place macros in namespaces and therefore the probability for running
+into naming conflicts is comparatively high. The most common problems
+occur with the ERROR, WARNING, and TRACE macros. If LogTrace finds
+these macro to be already defined, we use LT_ERROR, LT_WARNING, and
+LT_TRACE macros instead.
+
+\subsection SIDEEFFECTS Carefully avoid side effects.
+
+Make sure that you do not implement side effects when invoking
+logtrace commands, because the behaviour of your program should not
+change if debugging is turned off. For example, if you increase \c i
+after writing it into the logfile using \c TRACE("i="<<i++), the
+functionality of your program changes if the TRACE() command is
+removed, then \c i will not be increased.
+
+\subsection RELATED Related software
+
+There are other packages that that can help to debug your software, for example
+\c GNU \c Nana by P. J. Maker, or \c libdbg by J. Pryor. LogTrace is similar to
+\c libdbg since the main concern is providing as much information in a logfile
+as possible -- whenever a warning, error or invariant violation has occured.
+
+\section DISCLAIMER Copyright notice
+
+This document is part of the LogTrace package. Maintainer of this
+package is Frank Hoeppner. Many thanks to the contributors to LogTrace (see \c
+THANKS file). Please mail bug reports, suggestions,
+comments and any other feedback to \c frank.hoeppner@ieee.org. The
+package has been developed under Linux with the egcs-2.91.66
+compiler. You can obtain this package from \c
+http://www.fuzzy-clustering.de. This document has been generated with
+the help of \c doxygen by Dimitri van Heesch.
+
+The first version of LogTrace has been developed when I was with the
+German Aerospace Center (DLR). Although the package has been
+completely rewritten since then, I would like to thank for their
+permission to publish this package under LGPL.
+
+This library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 2.1 of the
+License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
+USA.
+
+*/

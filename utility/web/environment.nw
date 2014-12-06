@@ -1,0 +1,15 @@
+<<Environment Project>>=
+Intelligent Pilot Assistant (IPA)
+@
+<<Environment Workpackage>>=
+Basic Utility Files
+@
+<<Environment Author>>=
+Frank Hoeppner
+@
+<<Environment Compiler>>=
+SGI CC 4.0, GNU 2.7/8
+@
+<<Environment Description>>=
+Source Documentation Handbook: tutorial-UTIL
+@

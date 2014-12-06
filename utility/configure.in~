@@ -1,0 +1,23 @@
+
+dnl ********************************************************************
+dnl *** configure.in, package UTIL, <frank.hoeppner@ieee.org>
+
+AC_INIT
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(utility,1.1.7)
+FH_DEBUG
+AM_PROG_LIBTOOL
+
+AC_PROG_RANLIB
+AC_LANG_CPLUSPLUS
+AC_PROG_CXX
+AC_PROG_CXXCPP
+
+FH_HAVE_STL
+FH_DOCS
+
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AC_OUTPUT(Makefile src/Makefile doc/Makefile)

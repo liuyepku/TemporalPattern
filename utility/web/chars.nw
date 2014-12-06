@@ -1,0 +1,284 @@
+@
+
+\section{Character String} 
+
+We implement a very simple \LA Chars\RA\ template class for
+[[char[n]]] variables. If you need dynamic and more complicated string
+handling, use the STL [[string]] class. Here, we just try to
+encapsulate the various [[str...]] C functions to handle character
+strings of type [[char*]]. We define the common operators for string
+concatenation, comparison, etc.
+
+@
+
+The \LA Chars\RA\ class takes the (maximum) size of the string as a
+template parameter.
+
+<<Chars Template Definition>>=
+template <int SIZE=128>
+@
+\begin{source}
+<<Chars Usage>>=
+chars [WITH] { UTIL } [DEFS] CLASS
+@
+<<Chars Header Includes>>=
+#include <iostream.h>
+#include <stdio.h>
+#include "<<DefBool Definition>>.hpp"
+@
+<<Chars Implementation>>=
+@
+<<Chars Template>>=
+template <int SIZE>
+@
+<<Chars Template Parameter>>=
+<SIZE>
+@
+<<Chars Private Data>>=
+char m_text[SIZE];
+@
+\end{source}
+
+\topic{Initialization} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+There is the default \constructor{chars}, copy constructor and
+[[char]]-typecast constructor.
+
+<<Chars Public Functions>>=
+inline <<Chars>>();
+inline <<Chars>>(char);
+inline <<Chars>>(const <<Chars>>&);
+inline <<Chars>>(const char *);
+@
+
+\begin{source} All of them are trivial and therefore implemented inline.
+
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline <<Chars + Template Parameter>>::<<Chars>>()
+  { m_text[0]='\0'; }
+
+<<Chars Template>>
+inline <<Chars + Template Parameter>>::<<Chars>>(char c)
+  { m_text[0]=c; m_text[1]='\0'; }
+
+<<Chars Template>>
+inline <<Chars + Template Parameter>>::<<Chars>>(const <<Chars>>& a_chars) 
+  { strcpy(m_text,a_chars.m_text); }
+
+<<Chars Template>>
+inline <<Chars + Template Parameter>>::<<Chars>>(const char *ap_charp) 
+  { if (ap_charp==NULL) m_text[0]='\0'; else strncpy(m_text,ap_charp,SIZE); }
+@
+\end{source}
+
+With some string utility functions in section \ref{utilstream:sec} you
+need the reference and length of a string. The following macro eases
+the use of the \LA Chars\RA class at this point. Instead of
+{\tt read\_line(is, string(), string.size())} you can type
+{\tt read\_line(is, STRREF(string));}.
+
+<<Chars Global>>=
+#define STRREF(charsinstance) (charsinstance)(),(charsinstance).size()
+@
+
+\topic{Element Access} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A reference to the [[char*]] internal data representation is given by
+the paranthesis-\operator{chars}{$()$}.
+
+<<Chars Public Functions>>=
+inline char* operator()();
+inline const char* operator()() const;
+@
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline char* <<Chars + Template Parameter>>::operator()() 
+  { return m_text; }
+
+<<Chars Template>>
+const char* <<Chars + Template Parameter>>::operator()() const 
+  { return m_text; }
+@
+\end{source}
+
+Access to a single character of the string is provided in the usual
+way (by means of the \operator{chars}{$[]$}[]).
+
+<<Chars Public Functions>>=
+inline char& operator[](int);
+inline char operator[](int) const;
+@
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline char& <<Chars + Template Parameter>>::operator[](int i) 
+  { return m_text[i]; }
+
+<<Chars Template>>
+char <<Chars + Template Parameter>>::operator[](int i) const 
+  { return m_text[i]; }
+@
+\end{source}
+
+The following \method{chars}{size}s provide information about the
+number of characters that can be stored ([[size()]]), the actual
+length of the string ([[len()]]), and whether the string is currently
+empty ([[empty()]]).
+
+<<Chars Public Functions>>=
+inline int size() const;
+inline int len() const;
+bool empty() const;
+@
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline int <<Chars + Template Parameter>>::size() const 
+  { return SIZE; }
+<<Chars Template>>
+inline int <<Chars + Template Parameter>>::len() const 
+  { return strlen(m_text); }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::empty() const 
+  { return m_text[0]=='\0'; }
+@
+\end{source}
+
+\topic{Assignment} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \operator{chars}{$=$} allows assignment of a [[char*]] to a \LA
+Chars\RA .
+
+<<Chars Public Functions>>=
+inline void operator=(char c);
+inline void operator=(const char* p );
+inline void operator=(const <<Chars>>& c );
+@
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator=(char c) 
+  { m_text[0]=c; m_text[1]='\0'; }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator=(const char* p) 
+  { strncpy(m_text,p,SIZE-1); }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator=(const <<Chars>>& c) 
+  { strncpy(m_text,c.m_text,SIZE-1); }
+@
+\end{source}
+
+The following \operator{chars}{$+=$}s\index{concatenation} allow concatenation of \LA
+Chars\RA\ with [[char]], [[char*]], \LA Chars\RA, and [[int]].
+
+<<Chars Public Functions>>=
+inline void operator+=(const char*);
+inline void operator+=(const char);
+inline void operator+=(const <<Chars>>&); 
+inline void operator+=(int); 
+@
+\begin{source} Remember: strlen does not count the terminating
+[['\0']].
+
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator+=(const char* p) 
+  { strncat(m_text,p,SIZE-strlen(m_text)-1); }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator+=(const char c) 
+  { m_text[strlen(m_text)]=c; m_text[strlen(m_text)+1]='\0'; }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator+=(const <<Chars>>& S) 
+  { strncat(m_text,S.m_text,SIZE-strlen(m_text)-1); }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator+=(int n) 
+  { char p[7]; sprintf(p,"%d",n); operator+=(p); }
+@
+\end{source}
+
+This \operator{chars}{$-=$} removes a number of characters
+from the back of the string.
+
+<<Chars Public Functions>>=
+inline void operator-=(size_t);
+@
+
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::operator-=(size_t i)
+  { if (i>strlen(m_text)) i=0; else i=strlen(m_text)-i; m_text[i]='\0'; }
+@
+\end{source}
+
+\topic{Comparison} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We implement all operators for comparison with \LA Chars\RA\ and [[char*]].
+
+<<Chars Public Functions>>=
+inline bool operator<(const <<Chars>>& S) const;
+inline bool operator>(const <<Chars>>& S) const;
+inline bool operator==(const <<Chars>>& S) const;
+inline bool operator!=(const <<Chars>>& S) const;
+
+inline bool operator<(const char *p_S) const;
+inline bool operator>(const char *p_S) const;
+inline bool operator==(const char *p_S ) const;
+inline bool operator!=(const char *p_S ) const;
+@
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator<(const <<Chars>>& S) const
+  { return strcmp(m_text,S.m_text)<0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator>(const <<Chars>>& S) const
+  { return strcmp(m_text,S.m_text)>0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator==(const <<Chars>>& S) const
+  { return strcmp(m_text,S.m_text)==0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator!=(const <<Chars>>& S) const
+  { return strcmp(m_text,S.m_text)!=0; }
+@
+
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator<(const char* p_S) const
+  { return strcmp(m_text,p_S)<0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator>(const char* p_S) const
+  { return strcmp(m_text,p_S)>0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator==(const char* p_S) const
+  { return strcmp(m_text,p_S)==0; }
+<<Chars Template>>
+inline bool <<Chars + Template Parameter>>::operator!=(const char *p_S) const
+  { return strcmp(m_text,p_S)!=0; }
+@
+\end{source}
+
+\topic{I/O Functions} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Finally, we provide the default i/o \method{chars}{write}s and
+operators.
+
+<<Chars Public Functions>>=
+inline void read(istream& is);
+inline void write(ostream& os) const;
+@
+
+\begin{source}
+<<Chars Inline Implementation>>=
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::read(istream& is) 
+  { is >> m_text; }
+<<Chars Template>>
+inline void <<Chars + Template Parameter>>::write(ostream& os) const 
+  { os << m_text; }
+<<Chars Default Inline I/O Operators>>
+@
+\end{source}
+

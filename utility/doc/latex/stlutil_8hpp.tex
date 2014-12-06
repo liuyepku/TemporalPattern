@@ -1,0 +1,54 @@
+\hypertarget{stlutil_8hpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/stlutil.hpp File Reference}
+\label{stlutil_8hpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/stlutil.\+hpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/stlutil.\+hpp}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structvirtual__unary__function}{virtual\+\_\+unary\+\_\+function$<$ Arg, Result $>$}
+\item 
+struct \hyperlink{structvirtual__binary__function}{virtual\+\_\+binary\+\_\+function$<$ Arg1, Arg2, Result $>$}
+\item 
+struct \hyperlink{structstring__less}{string\+\_\+less}
+\item 
+struct \hyperlink{structless__dereference}{less\+\_\+dereference$<$ P\+O\+I\+N\+T\+E\+R $>$}
+\item 
+struct \hyperlink{struct_deleter}{Deleter$<$ T $>$}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Operation1 , class Operation2 $>$ }\\unary\+\_\+compose$<$ Operation1, Operation2 $>$ \hyperlink{stlutil_8hpp_a7b7c3ca2404eb35ba055f2280e595f72}{compose} (const Operation1 \&op1, const Operation2 \&op2)
+\item 
+{\footnotesize template$<$class Operation1 , class Operation2 , class Operation3 $>$ }\\mixed\+\_\+compose$<$ Operation1, Operation2, Operation3 $>$ \hyperlink{stlutil_8hpp_a0397bd3e678fcce24b66e272336340e8}{compose} (const Operation1 \&op1, const Operation2 \&op2, const Operation3 \&op3)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of \hyperlink{structstring__less}{string\+\_\+less}. 
+
+This file provides a couple of functors which are helpful when using the standard template library (S\+T\+L). To use a S\+T\+L \mbox{[}\mbox{[}set$<$\+T,...$>$\mbox{]}\mbox{]} or \mbox{[}\mbox{[}map$<$\+T,...$>$\mbox{]}\mbox{]} data structure, one must provide a \mbox{[}\mbox{[}binary\+\_\+function$<$\+T,\+T,bool$>$\mbox{]}\mbox{]} to compare the \href{resp.\
+[[map]]}{\tt \mbox{[}set\mbox{]}} contents. We define some of those binary functions for frequently used types \mbox{[}\mbox{[}T\mbox{]}\mbox{]}. Furthermore, we present some composition functors to compose binary functions.
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org} 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{stlutil_8hpp_a7b7c3ca2404eb35ba055f2280e595f72}{}\index{stlutil.\+hpp@{stlutil.\+hpp}!compose@{compose}}
+\index{compose@{compose}!stlutil.\+hpp@{stlutil.\+hpp}}
+\subsubsection[{compose}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Operation1 , class Operation2 $>$ unary\+\_\+compose$<$Operation1,Operation2$>$ compose (
+\begin{DoxyParamCaption}
+\item[{const Operation1 \&}]{op1, }
+\item[{const Operation2 \&}]{op2}
+\end{DoxyParamCaption}
+)}\label{stlutil_8hpp_a7b7c3ca2404eb35ba055f2280e595f72}
+compose(u1,u2) is a unary function u with u(x)=u1(u2(x)). \hypertarget{stlutil_8hpp_a0397bd3e678fcce24b66e272336340e8}{}\index{stlutil.\+hpp@{stlutil.\+hpp}!compose@{compose}}
+\index{compose@{compose}!stlutil.\+hpp@{stlutil.\+hpp}}
+\subsubsection[{compose}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Operation1 , class Operation2 , class Operation3 $>$ mixed\+\_\+compose$<$Operation1,Operation2,Operation3$>$ compose (
+\begin{DoxyParamCaption}
+\item[{const Operation1 \&}]{op1, }
+\item[{const Operation2 \&}]{op2, }
+\item[{const Operation3 \&}]{op3}
+\end{DoxyParamCaption}
+)}\label{stlutil_8hpp_a0397bd3e678fcce24b66e272336340e8}
+compose(u1,u2,u3) is a binary function u with u(x,y)=u1(u2(x),u3(y)). 

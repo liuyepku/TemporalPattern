@@ -1,0 +1,353 @@
+@
+
+\section{STL Container Stream Output}
+\label{stlstream:sec}
+
+We present functions which allow the use of the default output [[operator<<]]
+with STL container classes. In case i/o polymorphism is needed (which is not
+supported by [[operator<<]]), optional output functions are provided.
+
+\topic{Default i/o operators} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We provide (inline template) functions for stream input (resp.\
+output) of the STL data structures [[pair]], [[list]], [[vector]],
+[[[multi]set]], and [[[multi]map]]. All of these functions presuppose
+that there is a [[operator>>]] (resp.\ [[operator<<]]) for the
+underlying data types, e.g.\ for type [[T]] when [[list<T>]] or
+[[vector<T>]] is used. When reading a container from a stream,
+elements are always inserted at the end of the container, however, the
+end position does not have any effect if the container is ordered.
+
+\begin{source}
+
+We start with the [[pair]] structure.
+
+<<STLStream Inline Implementation>>=
+template <class T1, class T2> inline
+ostream& operator@<<(ostream& os, const pair<T1,T2>& a_pair)
+  { return os << "(" << a_pair.first << "," << a_pair.second << ")"; }
+@
+
+<<STLStream Inline Implementation>>=
+template <class T1, class T2> inline
+istream& operator@>>(istream& is, pair<T1,T2>& a_pair)
+  { 
+  read_until(is,"(");
+  is >> a_pair.first;
+  read_until(is,",");
+  is >> a_pair.second;
+  read_until(is,")"); 
+  return is;
+  }
+@
+
+For every STL container [[a_container]] (of type [[ITERATOR]]) we can
+implement its output into a stream [[os]] in the same way.
+in the same way:
+
+<<STL Container Output>>=
+ITERATOR i;
+for (i=a_container_begin;i!=a_container_end;++i)
+  {
+  os << a_inter << (*i);
+  }
+@
+
+Now consider STL container input. In the following while loop it is
+necessary to build a new container element with each loop to assure
+that all attributes have default values. If not all attributes are set
+by the read operation, the following case might occur: Reading the
+first element, an attribute is set to a value that differs from the
+default. The next element contains no value for this attribute, so by
+definition the default value should be used. If the element is not
+constructed each time, the previous setting would remain.
+
+<<STL Container Input>>=
+while (!is_followed_by(is,a_final,false)) 
+  {
+  typename CONTAINER::value_type element;
+  is >> element;
+  a_container.insert(a_container.end(),element);
+  is_followed_by(is,a_inter,false); // remove if found
+  }
+@
+
+We therefore implement this functionality within the following inline
+template functions. 
+\end{source} 
+The following \function{stl container i/o}s read or write elements  of an STL
+container. In addition to the default i/o functions, the start, intermediate,
+and final string can be chosen freely.  The standard i/o operator use the
+following default values.
+
+<<STLStream Instantiation>>=
+const char KEYWORD_STL_START[] = "(";
+const char KEYWORD_STL_INTER[] = " ";
+const char KEYWORD_STL_FINAL[] = ")";
+@
+\begin{source}
+<<STLStream Global>>=
+extern const char KEYWORD_STL_START[];
+extern const char KEYWORD_STL_INTER[];
+extern const char KEYWORD_STL_FINAL[];
+@
+\end{source}
+
+<<STLStream Inline Implementation>>=
+template <class ITERATOR> inline
+ostream& 
+stl_container_output
+  (
+  ostream& os,
+  const ITERATOR& a_container_begin,
+  const ITERATOR& a_container_end,
+  const char * const a_start = KEYWORD_STL_START,
+  const char * const a_inter = KEYWORD_STL_INTER,
+  const char * const a_final = KEYWORD_STL_FINAL 
+  )
+@
+\begin{source}
+<<STLStream Inline Implementation>>=
+  {
+  os << a_start;
+  <<STL Container Output>>
+  os << " " << a_final;
+  return os;
+  }
+@
+\end{source}
+
+<<STLStream Inline Implementation>>=
+template <class CONTAINER> inline
+ostream& 
+stl_container_output
+  (
+  ostream& os,
+  const CONTAINER& a_container,
+  const char * const a_start = KEYWORD_STL_START,
+  const char * const a_inter = KEYWORD_STL_INTER,
+  const char * const a_final = KEYWORD_STL_FINAL 
+  )
+@
+\begin{source}
+<<STLStream Inline Implementation>>=
+  {
+  return stl_container_output(os,a_container.begin(),a_container.end(),
+    a_start,a_inter,a_final);
+  }
+@
+\end{source}
+
+<<STLStream Inline Implementation>>=
+template <class CONTAINER> inline
+istream& 
+stl_container_input
+  (
+  istream& is,
+  CONTAINER& a_container,
+  const char * const a_start = KEYWORD_STL_START,
+  const char * const a_inter = KEYWORD_STL_INTER,
+  const char * const a_final = KEYWORD_STL_FINAL 
+  )
+@
+\begin{source}
+<<STLStream Inline Implementation>>=
+  {
+  read_until(is,a_start);
+  <<STL Container Input>>
+  return is;
+  }
+@
+
+We could have implemented the above function as an [[operator<<]], but then
+this function would be applied to every type with missing [[operator<<]] by the
+compiler. To restrict the applicability, we implement the following inline
+template functions for [[list]], [[vector]], [[set]], ..., each of them calling
+[[stream_stl_container]].
+
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+ostream& operator<<(ostream& os, const list<T>& a_list)
+  { return stl_container_output(os,a_list); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+istream& operator>>(istream& is, list<T>& a_list)
+  { return stl_container_input(is,a_list); }
+@
+
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+ostream& operator<<(ostream& os, const vector<T>& a_vector)
+  { return stl_container_output(os,a_vector); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+istream& operator>>(istream& is, vector<T>& a_vector)
+  { return stl_container_input(is,a_vector); }
+@
+
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2> inline
+ostream& operator<<(ostream& os, const set<T1,T2>& a_set)
+  { return stl_container_output(os,a_set); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2> inline
+istream& operator>>(istream& is, set<T1,T2>& a_set)
+  { return stl_container_input(is,a_set); }
+@
+
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2> inline
+ostream& operator<<(ostream& os, const multiset<T1,T2>& a_set)
+  { return stl_container_output(os,a_set); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2> inline
+istream& operator>>(istream& is, multiset<T1,T2>& a_set)
+  { return stl_container_input(is,a_set); }
+@
+
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2,class T3> inline
+ostream& operator<<(ostream& os, const map<T1,T2,T3>& a_map)
+  { return stl_container_output(os,a_map); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2,class T3> inline
+istream& operator>>(istream& is, map<T1,T2,T3>& a_map)
+  { return stl_container_input(is,a_map); }
+@
+
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2,class T3> inline
+ostream& operator<<(ostream& os, const multimap<T1,T2,T3>& a_map)
+  { return stl_container_output(os,a_map); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T1,class T2,class T3> inline
+istream& operator<<(istream& is, multimap<T1,T2,T3>& a_map)
+  { return stl_container_input(is,a_map); }
+@
+
+deque:
+
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+ostream& operator<<(ostream& os, const deque<T>& a_deque)
+  { return stl_container_output(os,a_deque); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+istream& operator<<(istream& is, deque<T>& a_deque)
+  { return stl_container_input(is,a_deque); }
+@
+
+queue:
+
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+ostream& operator<<(ostream& os, const queue<T>& a_queue)
+  { return stl_container_output(os,a_queue); }
+@
+<<STLStream Inline Implementation>>=
+
+template <class T> inline
+istream& operator<<(istream& is, queue<T>& a_queue)
+  { return stl_container_input(is,a_queue); }
+@
+
+\end{source}
+
+\topic{Polymorphism supporting output} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In case there is no [[operator<<]] for the underlying data type but a method
+[[void write(ostream&)]], one can optionally use the following [[write]]
+functions. If a container stores pointer, they can be dereferenced and written
+into the output stream via [[write_dereference]]. (Both [[write]] functions
+support polymorphism.)
+These functions assume that the underlying data type is a class!
+
+
+<<STLStream Public Functions>>=
+template <class CONTAINER> inline
+  void write(ostream&,const CONTAINER&);
+template <class CONTAINER> inline
+  void write_dereference(ostream&,const CONTAINER&);
+@
+
+\begin{source}
+We implement the same functionality as above, but instead of calling
+[[operator<<]] for the underlying data types, we call a member function
+[[write(ostream&)]].
+
+<<STLStream Inline Implementation>>=
+
+template <class CONTAINER> inline
+void write(ostream& os,const CONTAINER& a_container)
+  {
+  os << "{";
+  typename CONTAINER::const_iterator i;
+  for (i=a_container.begin();i!=a_container.end();++i)
+    {
+    os << " ";
+    (*i).write(os);
+    }
+  os << " }";
+  }
+@
+
+Additionally, we provide the following function which dereferences every
+container element before output. 
+
+<<STLStream Inline Implementation>>=
+
+template <class CONTAINER> inline
+void write_dereference(ostream& os,const CONTAINER& a_container)
+  {
+  os << "{";
+  typename CONTAINER::const_iterator i;
+  for (i=a_container.begin();i!=a_container.end();++i)
+    {
+    os << " ";
+    (*i)->write(os);
+    }
+  os << " }";
+  }
+@
+\end{source}
+
+\begin{source}
+\subsection*{Administrata} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<STLStream Usage>>=
+stlstream [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<STLStream Header Includes>>=
+#include <list.h>
+#include <vector.h>
+#include <set.h>
+#include <map.h>
+#include <multimap.h>
+#include <multiset.h>
+#include <deque>
+#include <queue>
+@
+<<STLStream History>>=
+@ 
+\end{source}

@@ -1,0 +1,260 @@
+\hypertarget{ustream_8cpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.cpp File Reference}
+\label{ustream_8cpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.\+cpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/ustream.\+cpp}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ustream_8cpp_aa28b24939a727a118606daad923ff866}{}bool {\bfseries is\+\_\+followed\+\_\+by} (istream \&is, const char a\+\_\+letter, bool put\+\_\+back\+\_\+if\+\_\+found, bool capital\+\_\+letters)\label{ustream_8cpp_aa28b24939a727a118606daad923ff866}
+
+\item 
+\hypertarget{ustream_8cpp_a52bd0c2688b26a3c57325bdfb2432ea2}{}int {\bfseries is\+\_\+followed\+\_\+by} (istream \&is, const keyword\+\_\+entry $\ast$p\+\_\+keyarray, bool put\+\_\+back\+\_\+if\+\_\+found, bool capital\+\_\+letters, bool skip\+\_\+white, int default\+\_\+value)\label{ustream_8cpp_a52bd0c2688b26a3c57325bdfb2432ea2}
+
+\item 
+int \hyperlink{ustream_8cpp_a3cfc3f0754653c6a023d81968beb0fdf}{is\+\_\+followed\+\_\+by} (istream \&is, const str2idx\+\_\+type \&map, bool put\+\_\+back\+\_\+if\+\_\+found, bool capital\+\_\+letters, bool skip\+\_\+white, int default\+\_\+value)
+\item 
+bool \hyperlink{ustream_8cpp_a3bd89d366a0deecb2291589668397677}{is\+\_\+followed\+\_\+by} (istream \&is, const char $\ast$p\+\_\+find, bool put\+\_\+back\+\_\+if\+\_\+found, bool capital\+\_\+letters, bool skip\+\_\+white)
+\item 
+char $\ast$ \hyperlink{ustream_8cpp_a0304d20a640573f75b5fc3558b2a321f}{get\+\_\+keyword} (const keyword\+\_\+entry $\ast$ap\+\_\+keywords, int value)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8cpp_ad3dd26f1567a07bf9f3d41d665e0a9dc}{read\+\_\+white} (istream \&is, S \&text)
+\item 
+template void \hyperlink{ustream_8cpp_a3ad669320198d16b97fa75200dd821eb}{read\+\_\+white} (istream \&, string \&)
+\item 
+template void \hyperlink{ustream_8cpp_ad63bf0a96d6d078b070a60b421660e83}{read\+\_\+white} (istream \&, \hyperlink{class_chars}{Chars} \&)
+\item 
+void \hyperlink{ustream_8cpp_af9ddcb63c84c632c179ffef9840b83aa}{read\+\_\+white} (istream \&is, char $\ast$p, size\+\_\+t l)
+\item 
+void \hyperlink{ustream_8cpp_a890f3eb8a4c48d4dacaa8d11f723e7dd}{read\+\_\+white} (istream \&is)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8cpp_a09f1fe2ec818c762bde56f0dcc41fe88}{read\+\_\+word\+\_\+break} (istream \&is, const char $\ast$p\+\_\+delimiter, S \&text)
+\item 
+\hypertarget{ustream_8cpp_a15986ccfd4dfe7d9d931cf4b7abe9b13}{}template void {\bfseries read\+\_\+word\+\_\+break} (istream \&, const char $\ast$, string \&)\label{ustream_8cpp_a15986ccfd4dfe7d9d931cf4b7abe9b13}
+
+\item 
+\hypertarget{ustream_8cpp_a7ef88447d28eacef026eba43a835f6f3}{}template void {\bfseries read\+\_\+word\+\_\+break} (istream \&, const char $\ast$, \hyperlink{class_chars}{Chars} \&)\label{ustream_8cpp_a7ef88447d28eacef026eba43a835f6f3}
+
+\item 
+\hypertarget{ustream_8cpp_a696cc1272e8234a19111abb31d5e9f46}{}void {\bfseries read\+\_\+word\+\_\+break} (istream \&is, const char $\ast$d, char $\ast$p, size\+\_\+t l)\label{ustream_8cpp_a696cc1272e8234a19111abb31d5e9f46}
+
+\item 
+\hypertarget{ustream_8cpp_af19a6551f3dec82d8c2197165c4ff393}{}void {\bfseries read\+\_\+word\+\_\+break} (istream \&is, const char $\ast$d)\label{ustream_8cpp_af19a6551f3dec82d8c2197165c4ff393}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\bool \hyperlink{ustream_8cpp_afd8648b2aeb30c72d8a78a2394becc8b}{read\+\_\+until} (istream \&is, const char $\ast$p\+\_\+find, S \&text, bool clear\+\_\+text)
+\item 
+\hypertarget{ustream_8cpp_a93b8b180323371acc55feae9fcda25a7}{}template bool {\bfseries read\+\_\+until} (istream \&, const char $\ast$, string \&, bool)\label{ustream_8cpp_a93b8b180323371acc55feae9fcda25a7}
+
+\item 
+\hypertarget{ustream_8cpp_a0051bb7b597c9b55009bc600a4cb1a91}{}template bool {\bfseries read\+\_\+until} (istream \&, const char $\ast$, \hyperlink{class_chars}{Chars} \&, bool)\label{ustream_8cpp_a0051bb7b597c9b55009bc600a4cb1a91}
+
+\item 
+\hypertarget{ustream_8cpp_a40bc7780232d2220ff3ee2d310639d3b}{}bool {\bfseries read\+\_\+until} (istream \&is, const char $\ast$d, char $\ast$p, size\+\_\+t l, bool b)\label{ustream_8cpp_a40bc7780232d2220ff3ee2d310639d3b}
+
+\item 
+\hypertarget{ustream_8cpp_a0065a0d37519e0cf0e35b070c24fa63c}{}bool {\bfseries read\+\_\+until} (istream \&is, const char $\ast$d)\label{ustream_8cpp_a0065a0d37519e0cf0e35b070c24fa63c}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8cpp_ae1991b20e051ef88d16426b6a69d77b3}{read\+\_\+until\+\_\+eof} (istream \&is, S \&text)
+\item 
+\hypertarget{ustream_8cpp_a525d38503f5ae0897eaabb2eec2fe79a}{}template void {\bfseries read\+\_\+until\+\_\+eof} (istream \&, string \&)\label{ustream_8cpp_a525d38503f5ae0897eaabb2eec2fe79a}
+
+\item 
+\hypertarget{ustream_8cpp_a8daf4bdbcb4b762ba0516811f813fded}{}template void {\bfseries read\+\_\+until\+\_\+eof} (istream \&, \hyperlink{class_chars}{Chars} \&)\label{ustream_8cpp_a8daf4bdbcb4b762ba0516811f813fded}
+
+\item 
+\hypertarget{ustream_8cpp_a9fe1e15ffa4270ef614d5a1f5aa82f8a}{}void {\bfseries read\+\_\+until\+\_\+eof} (istream \&is, char $\ast$p, size\+\_\+t l)\label{ustream_8cpp_a9fe1e15ffa4270ef614d5a1f5aa82f8a}
+
+\item 
+void \hyperlink{ustream_8cpp_a1aa33562c882f60898a67163af819c0c}{read\+\_\+lines\+\_\+starting\+\_\+with} (istream \&is, const char $\ast$p\+\_\+find)
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8cpp_a905adb3b01adfa38ea9d1735ae6077fb}{read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&is, char ip, char dp, S \&text, bool clear\+\_\+text)
+\item 
+\hypertarget{ustream_8cpp_a26f2a1de4eef8d742a8fe40eaad07fa5}{}template void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&, char, char, string \&, bool)\label{ustream_8cpp_a26f2a1de4eef8d742a8fe40eaad07fa5}
+
+\item 
+\hypertarget{ustream_8cpp_a380ac9fa6212fb977cbe26d80b0cf630}{}template void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&, char, char, \hyperlink{class_chars}{Chars} \&, bool)\label{ustream_8cpp_a380ac9fa6212fb977cbe26d80b0cf630}
+
+\item 
+\hypertarget{ustream_8cpp_a6a98c6343c19ca022b3de843360389ef}{}void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&is, char i, char d, char $\ast$p, size\+\_\+t l, bool b)\label{ustream_8cpp_a6a98c6343c19ca022b3de843360389ef}
+
+\item 
+\hypertarget{ustream_8cpp_af92bc4df41c9966d570620be5b89c804}{}void {\bfseries read\+\_\+until\+\_\+matching\+\_\+paranthesis} (istream \&is, char i, char d)\label{ustream_8cpp_af92bc4df41c9966d570620be5b89c804}
+
+\item 
+{\footnotesize template$<$class S $>$ }\\void \hyperlink{ustream_8cpp_a1200cd85b8b284859c6e34203e19eb8f}{read\+\_\+entry} (istream \&is, S \&text, bool keep\+\_\+delimiter)
+\item 
+\hypertarget{ustream_8cpp_aecd8a2a8a047e4a2038237396847a059}{}template void {\bfseries read\+\_\+entry} (istream \&, string \&, bool)\label{ustream_8cpp_aecd8a2a8a047e4a2038237396847a059}
+
+\item 
+\hypertarget{ustream_8cpp_aab1b0b5e970e8d59906cd18c330198fb}{}template void {\bfseries read\+\_\+entry} (istream \&, \hyperlink{class_chars}{Chars} \&, bool)\label{ustream_8cpp_aab1b0b5e970e8d59906cd18c330198fb}
+
+\item 
+\hypertarget{ustream_8cpp_aefcf4818cc74e80e9faaa24bc2f1d6ba}{}void {\bfseries read\+\_\+entry} (istream \&is, char $\ast$p, size\+\_\+t l, bool b)\label{ustream_8cpp_aefcf4818cc74e80e9faaa24bc2f1d6ba}
+
+\item 
+\hypertarget{ustream_8cpp_ac5a1383f62c494219e29e68def4ec1f9}{}void {\bfseries read\+\_\+entry} (istream \&is)\label{ustream_8cpp_ac5a1383f62c494219e29e68def4ec1f9}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Stream i/o. 
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org} 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ustream_8cpp_a0304d20a640573f75b5fc3558b2a321f}{}\index{ustream.\+cpp@{ustream.\+cpp}!get\+\_\+keyword@{get\+\_\+keyword}}
+\index{get\+\_\+keyword@{get\+\_\+keyword}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{get\+\_\+keyword}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ get\+\_\+keyword (
+\begin{DoxyParamCaption}
+\item[{const keyword\+\_\+entry $\ast$}]{ap\+\_\+keywords, }
+\item[{int}]{value}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a0304d20a640573f75b5fc3558b2a321f}
+Return the keyword associated with a given return index.
+
+Function seeks for the entry in ap\+\_\+keywords with identifier {\ttfamily value} and returns the associated keyword name. \hypertarget{ustream_8cpp_a3cfc3f0754653c6a023d81968beb0fdf}{}\index{ustream.\+cpp@{ustream.\+cpp}!is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}}
+\index{is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{is\+\_\+followed\+\_\+by}]{\setlength{\rightskip}{0pt plus 5cm}int is\+\_\+followed\+\_\+by (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const str2idx\+\_\+type \&}]{map, }
+\item[{bool}]{put\+\_\+back\+\_\+if\+\_\+found, }
+\item[{bool}]{capital\+\_\+letters, }
+\item[{bool}]{skip\+\_\+white, }
+\item[{int}]{default\+\_\+value}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a3cfc3f0754653c6a023d81968beb0fdf}
+Same as above, but keywords are stored in a string map rather than a sorted char array. \hypertarget{ustream_8cpp_a3bd89d366a0deecb2291589668397677}{}\index{ustream.\+cpp@{ustream.\+cpp}!is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}}
+\index{is\+\_\+followed\+\_\+by@{is\+\_\+followed\+\_\+by}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{is\+\_\+followed\+\_\+by}]{\setlength{\rightskip}{0pt plus 5cm}bool is\+\_\+followed\+\_\+by (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find, }
+\item[{bool}]{put\+\_\+back\+\_\+if\+\_\+found, }
+\item[{bool}]{capital\+\_\+letters, }
+\item[{bool}]{skip\+\_\+white}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a3bd89d366a0deecb2291589668397677}
+Sneak for a word in the input stream.
+
+\begin{DoxyAttention}{Attention}
+If you set {\ttfamily capital\+\_\+letters} to {\ttfamily true}, the keyword {\ttfamily p\+\_\+find} must also be in capital letters. 
+\end{DoxyAttention}
+
+\begin{DoxyParams}{Parameters}
+{\em is} & input stream \\
+\hline
+{\em p\+\_\+find} & is this word next in the input stream? \\
+\hline
+\end{DoxyParams}
+\hypertarget{ustream_8cpp_a1200cd85b8b284859c6e34203e19eb8f}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+entry@{read\+\_\+entry}}
+\index{read\+\_\+entry@{read\+\_\+entry}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+entry}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+entry (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text, }
+\item[{bool}]{keep\+\_\+delimiter}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a1200cd85b8b284859c6e34203e19eb8f}
+Read data entry from stream.
+
+This function reads a single word, the text between \char`\"{}hyphens\char`\"{} or \{parantheses\}. This format is used within Bib\+Te\+X files, for example. In case of a single word, a final separating colon will not be removed from the stream. If {\ttfamily keep\+\_\+delimiter} is {\ttfamily true}, the hyphens and parantheses will also be stored in the {\ttfamily text} output. \hypertarget{ustream_8cpp_a1aa33562c882f60898a67163af819c0c}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+lines\+\_\+starting\+\_\+with@{read\+\_\+lines\+\_\+starting\+\_\+with}}
+\index{read\+\_\+lines\+\_\+starting\+\_\+with@{read\+\_\+lines\+\_\+starting\+\_\+with}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+lines\+\_\+starting\+\_\+with}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+lines\+\_\+starting\+\_\+with (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a1aa33562c882f60898a67163af819c0c}
+Read lines with a certain prefix.
+
+This function reads all lines from the stream starting with a certain prefix (2nd parameter). (Useful to skip all comment lines introduced by a certain string.) \hypertarget{ustream_8cpp_afd8648b2aeb30c72d8a78a2394becc8b}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+until@{read\+\_\+until}}
+\index{read\+\_\+until@{read\+\_\+until}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+until}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ bool read\+\_\+until (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+find, }
+\item[{S \&}]{text, }
+\item[{bool}]{clear\+\_\+text}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_afd8648b2aeb30c72d8a78a2394becc8b}
+Read from stream until keyword is found.
+
+This function reads all characters from the stream until the specified keyword (2nd parameter) has been found. The return value specifies whether the keyword has been found or not (end of file). \hypertarget{ustream_8cpp_ae1991b20e051ef88d16426b6a69d77b3}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+until\+\_\+eof@{read\+\_\+until\+\_\+eof}}
+\index{read\+\_\+until\+\_\+eof@{read\+\_\+until\+\_\+eof}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+until\+\_\+eof}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+until\+\_\+eof (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_ae1991b20e051ef88d16426b6a69d77b3}
+Read remaining characters until end of stream. \hypertarget{ustream_8cpp_a905adb3b01adfa38ea9d1735ae6077fb}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+until\+\_\+matching\+\_\+paranthesis@{read\+\_\+until\+\_\+matching\+\_\+paranthesis}}
+\index{read\+\_\+until\+\_\+matching\+\_\+paranthesis@{read\+\_\+until\+\_\+matching\+\_\+paranthesis}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+until\+\_\+matching\+\_\+paranthesis}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+until\+\_\+matching\+\_\+paranthesis (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{char}]{ip, }
+\item[{char}]{dp, }
+\item[{S \&}]{text, }
+\item[{bool}]{clear\+\_\+text}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a905adb3b01adfa38ea9d1735ae6077fb}
+Read text in parantheses.
+
+This function assumes that a certain ``opening\textquotesingle{}\textquotesingle{} paranthesis (2nd parameter) has already been read from the stream. The function reads all characters until the matching ``closing\textquotesingle{}\textquotesingle{} paranthesis (3rd parameter) has been found. \hypertarget{ustream_8cpp_ad3dd26f1567a07bf9f3d41d665e0a9dc}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_ad3dd26f1567a07bf9f3d41d665e0a9dc}
+Read white spaces from stream.
+
+This function reads all white characters (like spaces, tabs, line feeds) from the stream. \hypertarget{ustream_8cpp_a3ad669320198d16b97fa75200dd821eb}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}template void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{, }
+\item[{string \&}]{}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a3ad669320198d16b97fa75200dd821eb}
+read white-\/space characters from stream into {\ttfamily string} \hypertarget{ustream_8cpp_ad63bf0a96d6d078b070a60b421660e83}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}template void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{, }
+\item[{{\bf Chars} \&}]{}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_ad63bf0a96d6d078b070a60b421660e83}
+read white-\/space characters from stream into {\ttfamily \hyperlink{class_chars}{Chars}} \hypertarget{ustream_8cpp_af9ddcb63c84c632c179ffef9840b83aa}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{char $\ast$}]{p, }
+\item[{size\+\_\+t}]{l}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_af9ddcb63c84c632c179ffef9840b83aa}
+read white-\/space characters from stream into {\ttfamily char$\ast$} \hypertarget{ustream_8cpp_a890f3eb8a4c48d4dacaa8d11f723e7dd}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+white@{read\+\_\+white}}
+\index{read\+\_\+white@{read\+\_\+white}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+white}]{\setlength{\rightskip}{0pt plus 5cm}void read\+\_\+white (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a890f3eb8a4c48d4dacaa8d11f723e7dd}
+read white-\/space characters from stream \hypertarget{ustream_8cpp_a09f1fe2ec818c762bde56f0dcc41fe88}{}\index{ustream.\+cpp@{ustream.\+cpp}!read\+\_\+word\+\_\+break@{read\+\_\+word\+\_\+break}}
+\index{read\+\_\+word\+\_\+break@{read\+\_\+word\+\_\+break}!ustream.\+cpp@{ustream.\+cpp}}
+\subsubsection[{read\+\_\+word\+\_\+break}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class S $>$ void read\+\_\+word\+\_\+break (
+\begin{DoxyParamCaption}
+\item[{istream \&}]{is, }
+\item[{const char $\ast$}]{p\+\_\+delimiter, }
+\item[{S \&}]{text}
+\end{DoxyParamCaption}
+)}\label{ustream_8cpp_a09f1fe2ec818c762bde56f0dcc41fe88}
+Read from stream until break character found.
+
+Reading is stopped if any of the characters in the second parameter is found. Reading is also stopped at white space characters. If the first (non-\/white) character is a break character, it will not stop reading. The break character will not be removed from the input stream. 

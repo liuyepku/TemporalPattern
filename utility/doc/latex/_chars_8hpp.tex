@@ -1,0 +1,25 @@
+\hypertarget{_chars_8hpp}{}\section{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/\+Chars.hpp File Reference}
+\label{_chars_8hpp}\index{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/\+Chars.\+hpp@{/home/liuye/\+Documents/\+Temporal\+Pattern/utility/src/\+Chars.\+hpp}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{class_chars}{Chars}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{_chars_8hpp_ac3a169bf30e42a5d919574a60cfa7a97}{}istream \& {\bfseries operator$>$$>$} (istream \&is, \hyperlink{class_chars}{Chars} \&a\+\_\+var)\label{_chars_8hpp_ac3a169bf30e42a5d919574a60cfa7a97}
+
+\item 
+\hypertarget{_chars_8hpp_a44deb1aa0602e0d2317753cc587c05ed}{}ostream \& {\bfseries operator$<$$<$} (ostream \&os, const \hyperlink{class_chars}{Chars} \&a\+\_\+var)\label{_chars_8hpp_a44deb1aa0602e0d2317753cc587c05ed}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A simple class to encapsulate char $\ast$ handling. 
+
+\begin{DoxyAuthor}{Author}
+(c) 1999-\/2001 Frank Hoeppner \href{mailto:frank.hoeppner@ieee.org}{\tt frank.\+hoeppner@ieee.\+org}
+\end{DoxyAuthor}
+We implement a very simple {\ttfamily \hyperlink{class_chars}{Chars}} template class for {\ttfamily char}\mbox{[}n\mbox{]} variables. If you need dynamic and more complicated string handling, use the S\+T\+L {\ttfamily string} class. Here, we just try to encapsulate the various {\ttfamily strcmp}, {\ttfamily strncpy} ... C functions to handle character strings of type {\ttfamily char$\ast$}. We define the common operators for string concatenation, comparison, etc. Function names are related to the names used in the S\+T\+L string class. 

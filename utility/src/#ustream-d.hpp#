@@ -1,0 +1,58 @@
+/*
+  
+  Context       : Basic Utility Files
+
+  Author        : Frank Hoeppner, see also AUTHORS file 
+
+  Description   : header of function module ustream-d
+                  Source Documentation Handbook: tutorial-UTIL
+  History       : see source file
+
+  Comment       : 
+    This file was generated automatically. DO NOT EDIT.
+
+  Copyright     : Copyright (C) 1999-2000 Frank Hoeppner
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#ifndef UtilStream_Drop_HEADER
+#define UtilStream_Drop_HEADER
+
+/* configuration include */
+#ifdef HAVE_CONFIG_H
+/*
+//FILETREE_IFDEF HAVE_CONFIG_H
+*/
+#include "config.h"
+/*
+//FILETREE_ENDIF
+*/
+#endif
+
+
+
+/* necessary includes */
+#include <iostream.h>
+#include <ctype.h> // isspace, tolower, toupper
+#include <string.h> // strlen
+#include "defbool.hpp" // bool
+#include "define.hpp" // char_cc
+//#define INLINE inline
+
+
+
+
+#endif /* UtilStream_Drop_HEADER */

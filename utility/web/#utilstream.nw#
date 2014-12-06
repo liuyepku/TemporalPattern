@@ -1,0 +1,927 @@
+@
+
+\section{Stream Analysis Functions}
+\label{utilstream:sec}
+
+We implement several utility functions for stream analysis and
+character string handling. 
+
+\begin{source}
+<<UtilStream Usage>>=
+utilstream [WITH] { UTIL } [DEFS] FUNCTION
+@
+<<UtilStream Header Includes>>=
+#include <iostream.h>
+#include <ctype.h> // isspace, tolower, toupper
+#include <string.h> // strlen
+#include "<<DefBool Definition>>.hpp" // bool
+#include "<<Constants Definition>>.hpp" // char_cc
+@
+<<UtilStream Source Includes (S,C)>>=
+#include "<<UtilStreamDrop Definition>>.hpp"
+@ 
+<<UtilStream Template Instantiation (S)>>=
+#ifndef NO_EXPLICIT_TEMPLATE_INSTANTIATION
+  template class basic_string<char>;
+#endif
+@
+\end{source}
+
+We distinguish three cases: 
+
+\begin{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item You may use the STL string class in order to store characters.
+
+<<UtilStream: optional parameter (S)>>=
+, string& a_string
+@
+
+\begin{source} Depending on the specialization we have to use
+different parameters with the functions in this section. With STL
+strings we use
+
+<<UtilStream Header Includes (S)>>=
+#include <string> // stl string
+@
+<<UtilStream: pass optional parameter (S)>>=
+, a_string
+@
+<<UtilStream: store/skip parameter (S)>>=
+, string& a_string
+@
+\end{source}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item You may use the conventional [[char]] arrays (resp.\ the \LA
+Chars\RA\ class) to store characters. With conventional characters we
+need a char pointer and the array size as parameters.
+
+<<UtilStream: optional parameter (C)>>=
+, char *p_text, size_t maxlen
+@
+
+\begin{source} 
+<<UtilStream Header Includes (C)>>=
+#include <string.h> // strlen
+@
+<<UtilStream: pass optional parameter (C)>>=
+, p_text, maxlen
+@
+<<UtilStream: store/skip parameter (C)>>=
+, char *p_text
+, size_t maxlen
+@
+\end{source}
+
+If the char pointer is [[NULL]] or [[maxlen]] is zero the function
+will skip (and not store) the characters that have been read.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\item May be you are not interested in storing the characters at all.
+In this case, there are no further parameters.
+
+\begin{source}
+<<UtilStream: optional parameter (D)>>=
+@
+<<UtilStream: pass optional parameter (D)>>=
+@
+<<UtilStream: store/skip parameter (D)>>=
+@
+\end{source}
+
+\end{itemize}
+
+ 
+\begin{source} Test source frame:
+
+<<UtilTest: test program (C)>>=
+{ // util stream
+const int buflen(1024);
+char buffer[buflen];
+string strbuffer;
+<<UtilStream: test program>>
+}
+@
+\end{source}
+
+\begin{source}
+\subsection{Reading or Skipping Characters} %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Many functions return the number of characters [[storelen]] stored in
+[[p_text]]. For those purposes we use the following variables:
+
+<<UtilStream: store/skip variables (S)>>=
+//const bool storechars(true); // unused
+a_string = "";
+@
+<<UtilStream: store/skip variables (C)>>=
+bool storechars( (p_text!=NULL) && (maxlen>0) ); // true:store, false:skip
+@
+<<UtilStream: store/skip variables (D)>>=
+//const bool storechars(false); // unused
+@
+<<UtilStream: store/skip variables>>=
+size_t stringlen(0); // no. of characters read
+@
+
+We count and store a character [[c]] that has been read:
+
+<<UtilStream: count and store/skip character [[c]] (S)>>=
+a_string += c;
+++stringlen;
+@
+<<UtilStream: count and store/skip character [[c]] (C)>>=
+if (    (storechars)
+     && (stringlen<maxlen)
+   )
+  {
+  p_text[stringlen]=c;
+  }
+++stringlen;
+@
+<<UtilStream: count and store/skip character [[c]] (D)>>=
+++stringlen;
+@
+
+And at the end we return the number of stored characters:
+
+<<UtilStream: return number of stored characters (S)>>=
+return stringlen;
+@
+<<UtilStream: return number of stored characters (C)>>=
+{
+  size_t storelen(0);
+  if (storechars)
+    {
+    if (stringlen<maxlen)
+      {
+      storelen = stringlen;
+      }
+    else
+      {
+      storelen = maxlen;
+      }
+    p_text[storelen] = '\0';
+    }
+  return storelen;
+}
+@
+<<UtilStream: return number of stored characters (D)>>=
+return 0;
+@
+
+In some cases, we want to skip the last [[skipchars]] characters, for
+example using [[read_until(is,"end",p_text,10)]] we do not want the
+keyword [[end]] to be stored in [[p_text]] (in this case [[skipchars]]
+would be $3$). Calculating the number of stored characters is slightly
+different in this case:
+
+<<UtilStream: cut last [[skipchars]] characters (S)>>=
+a_string.resize(stringlen-skipchars);
+@
+<<UtilStream: cut and return number of stored characters (S)>>=
+<<UtilStream: cut last [[skipchars]] characters>>
+return (stringlen-skipchars);
+@
+
+<<UtilStream: get [[storelen]] and cut [[chars]]>>=
+size_t storelen(0);
+if (storechars)
+  {
+  if (stringlen-skipchars<maxlen)
+    {
+    storelen = stringlen-skipchars;
+    }
+  else
+    {
+    storelen = maxlen;
+    }
+  p_text[storelen] = '\0';
+  }
+@
+<<UtilStream: cut last [[skipchars]] characters (C)>>=
+{
+  <<UtilStream: get [[storelen]] and cut [[chars]]>>
+}
+@
+<<UtilStream: cut and return number of stored characters (C)>>=
+{
+  <<UtilStream: get [[storelen]] and cut [[chars]]>>
+  return storelen;
+}
+@
+
+<<UtilStream: cut last [[skipchars]] characters (D)>>=
+@
+<<UtilStream: cut and return number of stored characters (D)>>=
+return 0;
+@
+
+A frequently used number of skipchars is 1:
+
+<<UtilStream: set [[skipchars]] to 1 (C,S)>>=
+const int skipchars = 1;
+@
+
+In `drop' mode this number is not used, to avoid ``unused variable''
+compiler warnings we thus define
+
+<<UtilStream: set [[skipchars]] to 1 (D)>>=
+// const int skipchars = 1; // unused
+@
+
+\end{source}
+
+\subsection{Basic Functions} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The following \function{read\_white} reads all {\sl white} characters
+(like spaces, tabs, line feeds) from the stream. It returns the number
+of characters that have been stored.
+
+<<UtilStream Public Functions>>=
+int read_white(istream& <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+int
+read_white
+  (
+  istream& is
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  char c;
+  <<UtilStream: set [[skipchars]] to 1>>
+  <<UtilStream: store/skip variables>>
+
+  if (is.good() && !is.eof())
+    {
+    do
+      {
+      is.get(c);
+      <<UtilStream: count and store/skip character [[c]]>>
+      }
+    while ( (is.good()) && (!is.eof()) && (isspace(c)) );
+    is.putback(c);
+    }      
+
+  <<UtilStream: cut and return number of stored characters>>
+  }
+@
+\end{source}
+
+This \function{read\_word} reads a word from the stream, e.g.\ reads
+all characters until the next white character. The function returns
+the number of characters that have been read.
+
+<<UtilStream Public Functions>>=
+inline int read_word(istream& <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Inline Implementation>>=
+inline 
+int 
+read_word
+  (
+  istream& is
+  <<UtilStream: store/skip parameter>>
+  )
+  { 
+  return read_word_break(is,"" <<UtilStream: pass optional parameter>>); 
+  }
+@
+\end{source}
+
+And the following \function{read\_word\_break} does the same, but
+breaks the word at any character that is given by means of the second
+parameter.
+
+<<UtilStream Public Functions>>=
+int read_word_break(istream&,const char * <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+int
+read_word_break
+  (
+  istream& is,
+  const char * p_delimiter
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  char c;
+  int i;
+  bool cont;
+  bool nonempty((p_delimiter!=NULL) && (p_delimiter[0]!='\0'));
+  bool notfirst(false);
+  <<UtilStream: set [[skipchars]] to 1>>
+  <<UtilStream: store/skip variables>>
+
+  read_white(is);
+  if (is.good())
+    {
+    do
+      {
+      is.get(c);
+      cont = !isspace(c);
+      if (cont && nonempty && notfirst) 
+        { 
+        i=0; 
+        while (p_delimiter[i]!='\0') 
+          { 
+          cont &= (c!=p_delimiter[i]); 
+          ++i; 
+          }
+        }
+      notfirst=true;
+      <<UtilStream: count and store/skip character [[c]]>>
+      }
+    while (    (is.good())
+            && (cont)
+          );
+    is.putback(c);
+    }
+    
+  <<UtilStream: cut and return number of stored characters>>
+  }
+@
+\end{source}
+
+
+The next \function{read\_until} reads all characters from the stream
+until the specified keyword (2nd parameter) has been found. The return
+value specifies whether the keyword has been found or not.
+
+<<UtilStream Public Functions>>=
+bool read_until(istream&,const char * <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+bool
+read_until
+  (
+  istream& is,
+  const char * p_find
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  int matching = 0;
+  const int skipchars = strlen(p_find);
+  <<UtilStream: store/skip variables>>
+
+  if (    (p_find    != NULL)
+       && (p_find[0] != '\0')
+       && (is.good())
+     )
+    {
+    char c;
+
+    do
+      {
+      is.get(c);
+      if (c==p_find[matching])
+        {
+        ++matching;
+        }
+      else
+        {
+        matching = 0;
+        }  
+      <<UtilStream: count and store/skip character [[c]]>>
+      }
+    while (    (matching<skipchars)
+            && (is.good())
+          );
+
+    <<UtilStream: cut last [[skipchars]] characters>>
+    }
+
+  return ((matching==skipchars) && (is.good() || is.eof()));
+  }
+@
+\end{source}
+
+This \function{read\_line} reads a complete line, e.g.\ all characters
+until the next line feed. The return value specifies whether the line
+feed has been found or not.
+
+<<UtilStream Public Functions>>=
+inline bool read_line(istream& <<UtilStream: optional parameter>>);
+@
+
+\begin{source}This function is implemented easily using
+[[read_until]]:
+
+<<UtilStream Inline Implementation>>=
+inline 
+bool
+read_line
+  (
+  istream& is
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  return read_until(is,"\n" <<UtilStream: pass optional parameter>>);
+  }
+@
+\end{source}
+
+This \function{read\_until\_eof} reads all remaining characters in the
+stream. (Calling this function only makes sense when using the
+optional parameter to store all these characters.) The function
+returns the number of characters read.
+
+<<UtilStream Public Functions>>=
+int read_until_eof(istream& <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+int
+read_until_eof
+  (
+  istream& is
+  <<UtilStream: store/skip parameter>>  
+  )
+  {
+  char c;
+  <<UtilStream: store/skip variables>>
+
+  if (is.good())
+    {
+    do
+      {
+      is.get(c);
+      <<UtilStream: count and store/skip character [[c]]>>
+      }
+    while (!is.eof());
+    }
+
+  <<UtilStream: return number of stored characters>>
+  }
+@
+\end{source}
+
+\subsection{Character Preview} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sometimes it is very useful to know what's in the stream next without
+reading characters from the stream. This can be done by the following
+\function{is\_followed\_by}.
+
+<<UtilStream Public Functions (D)>>=
+bool is_followed_by(istream&,const char*,bool put_back_if_found=true,
+                    bool capital_letters=false,bool skip_white=true);
+@
+
+The return value specifies if the keyword (2nd parameter) has been found in the
+stream or not. No non-white characters are read from the stream. Only if the
+third boolean parameter is set to [[false]], the keyword is removed from the
+stream (if at all detected).
+
+This function is very useful for some syntax checks:
+
+\begin{verbatim}
+if (!is_followed_by(is,"(",false)) SYNTAX_ERROR_EXPECTED("(");
+\end{verbatim}
+
+If the ``('' is found, no error is produced and ``('' is removed from
+the stream. Otherwise, if ``('' is not found, the stream is left
+untouched but we call the [[SYNTAX_ERROR_EXPECTED]] macro:
+
+<<UtilStream Global (D)>>=
+#define SYNTAX_ERROR_EXPECTED(x) \
+  {\
+  cerr << "syntax error: ´" << x << "´ expected" << endl;\
+  exit(-1);\
+  }
+@
+
+\begin{source} We implement this function in the `drop' specialization
+only to avoid multiple definitions.
+
+<<UtilStream Implementation (D)>>=
+bool is_followed_by
+  (
+  istream& is,
+  const char* p_find,
+  bool put_back_if_found /* = true */,
+  bool capital_letters /* = false */,
+  bool skip_white /* = true */
+  )
+  {
+  keyword_entry single_entry[2] = { {(char*)p_find,1},{NULL,0} };
+  return (-1 != is_followed_by(is,(keyword_entry*)&single_entry,put_back_if_found,capital_letters,skip_white));
+  }
+@
+\end{source}
+
+In many parsing applications there are many possibilities for the next
+keyword in the input stream. You have to the function above multiple
+times, once for each possible keyword. The following
+\function{is\_followed\_by} does not check for a single word but a
+(sorted) array of words and returns the number of the keyword that has
+actually been found -- or [[default_value]] otherwise. The last entry
+in an array of keywords has to be marked with a [[NULL]] name pointer.
+
+\begin{hacker} [Prior version used {\tt const char} and {\tt const
+int} fields, but there were problems with MS VC++, reported by Hartmut
+Helmke.] \end{hacker}
+
+<<UtilStream Typedefs (D)>>=
+struct keyword_entry
+  {
+  char *name;
+  int identifier;
+  };
+@
+
+<<UtilStream Public Functions (D)>>=
+int is_followed_by(istream&,const keyword_entry*,bool put_back_if_found=true,
+                   bool capital_letters=true,bool skip_white=true,int default_value=-1);
+@
+
+\begin{source}
+<<UtilStream Implementation (D)>>=
+int is_followed_by
+  (
+  istream& is,
+  const keyword_entry *p_keyword,
+  bool put_back_if_found /* = true */,
+  bool capital_letters /* = true */,
+  bool skip_white /* = true */,
+  int default_value /* = -1 */
+  )
+  {
+  char c;
+  int i=-1;
+  bool match = false;
+  bool busy;
+  const keyword_entry (*p_bestmatch)(p_keyword);
+  
+  if (skip_white) read_white(is);
+
+  do
+    {
+    busy = itob(is.good());
+    if (busy)
+      {
+      is.get(c); 
+      ++i;
+      if (capital_letters) c=toupper(c);
+      while ((p_keyword->name!=NULL) &&
+             (c > p_keyword->name[i])) 
+        { ++p_keyword; }
+      match = (p_keyword->name!=NULL) && (c == p_keyword->name[i]);
+      if (match) p_bestmatch=p_keyword;
+      busy = (p_keyword->name!=NULL) && (p_keyword->name[i+1] != '\0');
+      }
+    }
+  while (match && busy);
+  if (!match || busy) // busy == !done
+    {
+    is.putback(c);
+    --i;
+    }
+  if (put_back_if_found || !match)
+    {
+    for (;i>=0;--i)
+      {
+      is.putback(p_bestmatch->name[i]);
+      }
+    }
+
+  return (match)?p_bestmatch->identifier:default_value;
+  }
+@
+\end{source}
+
+This function looks forward to the next letter in the stream. In
+contrast to the previous function, white characters are not skipped
+before we check for the letter.
+
+<<UtilStream Public Functions (D)>>=
+bool is_followed_by(istream&,char,bool put_back_if_found=true,
+                   bool capital_letters=true);
+@
+
+\begin{source}
+<<UtilStream Implementation (D)>>=
+bool is_followed_by
+  (
+  istream& is,
+  const char a_letter,
+  bool put_back_if_found /* = true */,
+  bool capital_letters /* = true */
+  )
+  {
+  char c;
+
+  if (is.eof() || !is.good()) return false;
+  is.get(c);
+  bool match( (capital_letters)?toupper(c)==toupper(a_letter):c==a_letter );
+  if ((put_back_if_found) || (!match)) { is.putback(c); }
+  return match;
+  }
+@
+\end{source}
+
+This \function{get\_keyword} returns the keyword that corresponds to
+a given return code in a keyword table. The function is useful to
+write back a string-coded value into a stream (or somewhere else).
+The function returns a NULL pointer if the value has not been found in
+the keyword table.
+ 
+<<UtilStream Public Functions (D)>>=
+char* get_keyword(const keyword_entry*,int);
+@
+\begin{source}
+<<UtilStream Implementation (D)>>=
+char*
+get_keyword
+  (
+  const keyword_entry* ap_keywords,
+  int value
+  )
+  {
+  while ((ap_keywords->identifier!=value) &&
+         (ap_keywords->name!=NULL))
+    {
+    ++ap_keywords;
+    }
+  return ap_keywords->name;
+  }
+@
+
+
+The next \function{is\_followed\_by\_tag} is similar to the function
+above, but the specified keywords are expected in brackets, for
+example {\tt <keyword>} and {\tt </keyword>} just like HTML tags. The
+table of keywords contains only the keyword itself and the function
+returns which keyword has been found and whether it was original or
+modified (additional {\tt /} character). 
+
+\subsection{Advanced Functions} %%%%%%%%%%%%%%%%%%%%%%%%
+
+The \function{read\_entry} below reads a single word or -- if a [["]]
+or [[{]] follows next -- everything ... (This format is used within
+Bib\TeX\ files, for example.) In case of a single word, a final [[,]]
+will not be read.
+
+<<UtilStream Public Functions>>=
+void read_entry(istream& <<UtilStream: optional parameter>>);
+@
+\begin{source}
+<<UtilStream Implementation>>=
+void 
+read_entry
+  (
+  istream& is
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  read_white(is);
+  if (is_followed_by(is,"{",false))
+    {
+    read_until_matching_paranthesis(is,'{','}' <<UtilStream: pass optional parameter>>);
+    }
+  else if (is_followed_by(is,"\"",false))
+    {
+    read_until(is,"\"" <<UtilStream: pass optional parameter>>);
+    }
+  else
+    {
+    read_word_break(is,"," <<UtilStream: pass optional parameter>>);
+    }
+  }
+@
+
+This \function{read\_lines\_starting\_with} reads all lines from the
+stream starting with a certain prefix (2nd parameter). (Useful to skip
+all comment lines introduced by a certain string.) The number of read
+characters is returned.
+
+<<UtilStream Public Functions>>=
+int read_lines_starting_with(istream&,const char* <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+int
+read_lines_starting_with
+  (
+  istream& is, 
+  const char* p_find
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  bool found;
+  size_t storelen = 0;
+  
+  do
+    {
+    <<UtilStream: decrease optional maxlen>>
+    read_white(is <<UtilStream: pass optional parameter>>);
+    found = is_followed_by(is,p_find);
+    if (found) 
+      { 
+      storelen += read_line(is <<UtilStream: pass optional parameter>>);
+      }
+    }
+  while (found);
+
+  return storelen;
+  }
+@
+<<UtilStream: decrease optional maxlen (C)>>=
+maxlen -= storelen;
+@
+<<UtilStream: decrease optional maxlen (S,D)>>=
+@
+\end{source}
+
+This \function{read\_until\_matching\_paranthesis} assumes that a
+certain ``opening'' paranthesis (2nd parameter) has already been read
+from the stream. The function reads all characters until the matching
+``closing'' paranthesis (3rd parameter) has been found and returns the
+number of characters that have been read.
+
+<<UtilStream Public Functions>>=
+int read_until_matching_paranthesis(istream&,char,char <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+int 
+read_until_matching_paranthesis
+  (
+  istream& is, 
+  char ip,
+  char dp
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  char c;
+  <<UtilStream: set [[skipchars]] to 1>>
+  <<UtilStream: store/skip variables>>
+  int counter = 1;
+  //invariant(ip!=dp,"cannot distinguish openening paranthesis from closing paranthesis!",SOURCELOC);
+
+  while (    (counter!=0) 
+          && (is.good()) 
+        )
+    {
+    is.get(c);
+    if ( c == ip )
+      {
+      ++counter;
+      }
+    else
+      {
+      if ( c == dp )
+        {
+        --counter;
+        }
+      }
+    <<UtilStream: count and store/skip character [[c]]>>
+    }
+
+  <<UtilStream: cut and return number of stored characters>>
+  }
+@
+\end{source}
+
+\subsection{Retrieving Data from a Configuration File} %%%%%%%%%%%%%%%%%%%%
+
+The following template \function{read\_data} can be used to realize a simple
+init-file. Consider a configuration script file like
+
+\begin{verbatim}
+This is an explanation of your configuration file. All this text 
+is treated as comment. A data entry looks like
+
+{keyword entry}
+{datapath /usr/hoeppner/data}
+{version 2.0}
+\end{verbatim}
+@
+
+When calling [[read_data(is,"keyword",variable)]] the function searches for
+``\{keyword'' and uses the default input [[operator>>]] to read the following
+variable -- if the keyword has been found. Otherwise the variable remains
+unchanged. The return value of the function denotes whether the keyword has
+been found or not (resp.\ the variable has been updated or not).
+
+<<UtilStream Public Functions (D)>>=
+template <class DATA> inline bool read_data(istream&,char_cc,DATA&);
+@
+
+In the following code example, the version number remains $1.0$ if no other
+version entry has been found in ``app.ini''. At the beginning of each
+[[read_data]] call the stream starts search from the beginning.
+
+\begin{verbatim}
+float version(1.0);
+char path[200];
+ifstream is("app.ini");
+read_data(is,"version",version);
+read_data(is,"datapath",path);
+\end{verbatim}
+@
+
+\begin{source} This function is defined in the ``drop'' instance of
+utilstream only (to avoid multiple definitions).
+
+<<UtilStream Inline Implementation (D)>>=
+template <class DATA> 
+inline bool
+read_data
+  (
+  istream& a_input_stream,
+  char_cc ap_keyword,
+  DATA& a_data
+  )
+  {
+  a_input_stream.clear();
+  a_input_stream.seekg(ios::beg);
+  bool done;
+
+  do
+    {
+    done = (!read_until(a_input_stream,"{"));
+    if (!done)
+      {
+      if (is_followed_by(a_input_stream,ap_keyword,false))
+        {
+        a_input_stream >> a_data;
+        return true;
+        }
+      else
+        {
+        read_until_matching_paranthesis(a_input_stream,'{','}');
+        }
+      done = itob(a_input_stream.eof());  
+      }
+    }
+  while (!done);    
+  return false;
+  }
+@
+\end{source}
+
+And the same \function{read\_data} is defined especially for reading
+character strings from an input stream. When reading a character
+string from a configuration file, we do not use the default input
+operator, but read all characters until the closing paranthesis
+``\}''.
+
+<<UtilStream Public Functions>>=
+bool read_data(istream&,char_cc <<UtilStream: optional parameter>>);
+@
+
+\begin{source}
+<<UtilStream Implementation>>=
+bool
+read_data
+  (
+  istream& a_input_stream,
+  char_cc ap_keyword
+  <<UtilStream: store/skip parameter>>
+  )
+  {
+  a_input_stream.clear();
+  a_input_stream.seekg(ios::beg);
+  bool done;
+
+  do
+    {
+    done = (!read_until(a_input_stream,"{"));
+    if (!done)
+      {
+      if (is_followed_by(a_input_stream,ap_keyword,false))
+        {
+        read_white(a_input_stream);
+        read_until_matching_paranthesis(a_input_stream,'{','}' <<UtilStream: pass optional parameter>>);
+        return true;
+        }
+      else
+        {
+        read_until_matching_paranthesis(a_input_stream,'{','}');
+        }
+      done = itob(a_input_stream.eof());  
+      }
+    }
+  while (!done);
+  return false;
+  }
+@
+\end{source}
+

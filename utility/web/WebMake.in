@@ -1,0 +1,26 @@
+
+# util dictionary
+# Frank Hoeppner, DLR, Braunschweig
+
+[ENVIRONMENT] UTIL [PATH] utility/web/
+
+UTIL [CHUNK] DefBool [FROM] defbool
+UTIL [CHUNK] Time [FROM] time [NAME] TTime [FILE] ttime
+UTIL [CHUNK] Constants [FROM] constants [NAME] Define [FILE] define
+UTIL [CHUNK] STLUtil [FROM] stlutil
+UTIL [CHUNK] UtilStream [FROM] utilstream [LOCAL] { CHARS } 
+     [EXPORTS] UtilStreamChar [NAME] UtilStream [FILE] ustream
+UTIL [CHUNK] UtilStream [FROM] utilstream [LOCAL] { STLSTRING } 
+     [EXPORTS] UtilStreamString [NAME] UtilStream-String [FILE] ustream-s
+UTIL [CHUNK] UtilStream [FROM] utilstream [LOCAL] { DROP } 
+     [EXPORTS] UtilStreamDrop [NAME] UtilStream-Drop [FILE] ustream-d
+UTIL [CHUNK] STLStream [FROM] stlstream
+UTIL [CHUNK] Chars [FROM] chars
+UTIL [CHUNK] StrConvert [FROM] strconvert [LOCAL] { CHARS } 
+     [EXPORTS] StrConvertChar [FILE] strconv
+UTIL [CHUNK] StrConvert [FROM] strconvert [LOCAL] { STLSTRING } 
+     [EXPORTS] StrConvertString [FILE] strconv-s
+UTIL [CHUNK] TVL [FROM] threevaluedlogic [NAME] bool3 [FILE] bool3
+
+UTIL [CHUNK] UtilTest [FROM] utiltest
+#UTIL [CHUNK] LibHeader [FROM] libheader
